@@ -156,4 +156,255 @@ class VetCareTest extends TestCase
         $response->assertRedirect(route('pets.archived'));
         $this->assertDatabaseMissing('pets', ['id' => $pet->id]);
     }
+
+    public function test_vet_and_admin_can_access_medical_records_create_form(): void
+    {
+        $owner = Owner::create([
+            'name' => 'Maria Gomez',
+            'email' => 'maria@example.com',
+            'phone' => '555-0987',
+            'address' => 'Calle Central 789',
+        ]);
+
+        $pet = Pet::create([
+            'owner_id' => $owner->id,
+            'name' => 'Fido',
+            'species' => 'perro',
+            'breed' => 'Pug',
+            'birthdate' => '2023-01-01',
+            'weight' => 8.50,
+        ]);
+
+        $response = $this->actingAs($this->vet)->get(route('pets.medical-records.create', $pet));
+        $response->assertStatus(200);
+        $response->assertViewIs('medical_records.create');
+
+        $responseAdmin = $this->actingAs($this->admin)->get(route('pets.medical-records.create', $pet));
+        $responseAdmin->assertStatus(200);
+    }
+
+    public function test_recep_cannot_access_medical_records_create_form_and_gets_403(): void
+    {
+        $owner = Owner::create([
+            'name' => 'Maria Gomez',
+            'email' => 'maria@example.com',
+            'phone' => '555-0987',
+            'address' => 'Calle Central 789',
+        ]);
+
+        $pet = Pet::create([
+            'owner_id' => $owner->id,
+            'name' => 'Fido',
+            'species' => 'perro',
+            'breed' => 'Pug',
+            'birthdate' => '2023-01-01',
+            'weight' => 8.50,
+        ]);
+
+        $response = $this->actingAs($this->recep)->get(route('pets.medical-records.create', $pet));
+        $response->assertStatus(403);
+    }
+
+    public function test_vet_and_admin_can_store_medical_record_and_updates_pet_weight(): void
+    {
+        $owner = Owner::create([
+            'name' => 'Maria Gomez',
+            'email' => 'maria@example.com',
+            'phone' => '555-0987',
+            'address' => 'Calle Central 789',
+        ]);
+
+        $pet = Pet::create([
+            'owner_id' => $owner->id,
+            'name' => 'Fido',
+            'species' => 'perro',
+            'breed' => 'Pug',
+            'birthdate' => '2023-01-01',
+            'weight' => 8.50,
+        ]);
+
+        $medicalRecordData = [
+            'weight_at_visit' => 9.20,
+            'diagnosis' => 'Chequeo general excelente.',
+            'treatment' => 'Sin tratamiento necesario.',
+        ];
+
+        $response = $this->actingAs($this->vet)->post(route('pets.medical-records.store', $pet), $medicalRecordData);
+
+        $response->assertRedirect(route('pets.show', $pet));
+        $this->assertDatabaseHas('medical_records', [
+            'pet_id' => $pet->id,
+            'weight_at_visit' => 9.20,
+            'diagnosis' => 'Chequeo general excelente.',
+        ]);
+
+        // Verify pet weight is updated
+        $pet->refresh();
+        $this->assertEquals(9.20, $pet->weight);
+    }
+
+    public function test_recep_cannot_store_medical_record_and_gets_403(): void
+    {
+        $owner = Owner::create([
+            'name' => 'Maria Gomez',
+            'email' => 'maria@example.com',
+            'phone' => '555-0987',
+            'address' => 'Calle Central 789',
+        ]);
+
+        $pet = Pet::create([
+            'owner_id' => $owner->id,
+            'name' => 'Fido',
+            'species' => 'perro',
+            'breed' => 'Pug',
+            'birthdate' => '2023-01-01',
+            'weight' => 8.50,
+        ]);
+
+        $medicalRecordData = [
+            'weight_at_visit' => 9.20,
+            'diagnosis' => 'Chequeo general excelente.',
+            'treatment' => 'Sin tratamiento necesario.',
+        ];
+
+        $response = $this->actingAs($this->recep)->post(route('pets.medical-records.store', $pet), $medicalRecordData);
+        $response->assertStatus(403);
+    }
+
+    public function test_vet_and_admin_can_access_vaccinations_create_form(): void
+    {
+        $owner = Owner::create([
+            'name' => 'Maria Gomez',
+            'email' => 'maria@example.com',
+            'phone' => '555-0987',
+            'address' => 'Calle Central 789',
+        ]);
+
+        $pet = Pet::create([
+            'owner_id' => $owner->id,
+            'name' => 'Fido',
+            'species' => 'perro',
+            'breed' => 'Pug',
+            'birthdate' => '2023-01-01',
+            'weight' => 8.50,
+        ]);
+
+        $response = $this->actingAs($this->vet)->get(route('pets.vaccinations.create', $pet));
+        $response->assertStatus(200);
+        $response->assertViewIs('vaccinations.create');
+
+        $responseAdmin = $this->actingAs($this->admin)->get(route('pets.vaccinations.create', $pet));
+        $responseAdmin->assertStatus(200);
+    }
+
+    public function test_recep_cannot_access_vaccinations_create_form_and_gets_403(): void
+    {
+        $owner = Owner::create([
+            'name' => 'Maria Gomez',
+            'email' => 'maria@example.com',
+            'phone' => '555-0987',
+            'address' => 'Calle Central 789',
+        ]);
+
+        $pet = Pet::create([
+            'owner_id' => $owner->id,
+            'name' => 'Fido',
+            'species' => 'perro',
+            'breed' => 'Pug',
+            'birthdate' => '2023-01-01',
+            'weight' => 8.50,
+        ]);
+
+        $response = $this->actingAs($this->recep)->get(route('pets.vaccinations.create', $pet));
+        $response->assertStatus(403);
+    }
+
+    public function test_vet_and_admin_can_store_vaccination(): void
+    {
+        $owner = Owner::create([
+            'name' => 'Maria Gomez',
+            'email' => 'maria@example.com',
+            'phone' => '555-0987',
+            'address' => 'Calle Central 789',
+        ]);
+
+        $pet = Pet::create([
+            'owner_id' => $owner->id,
+            'name' => 'Fido',
+            'species' => 'perro',
+            'breed' => 'Pug',
+            'birthdate' => '2023-01-01',
+            'weight' => 8.50,
+        ]);
+
+        $vaccinationData = [
+            'name' => 'Parvovirus',
+            'dose' => '1ml',
+            'date_applied' => '2026-05-20',
+            'next_dose_due' => '2026-11-20',
+        ];
+
+        $response = $this->actingAs($this->vet)->post(route('pets.vaccinations.store', $pet), $vaccinationData);
+
+        $response->assertRedirect(route('pets.show', $pet));
+        $this->assertDatabaseHas('vaccinations', [
+            'pet_id' => $pet->id,
+            'name' => 'Parvovirus',
+            'dose' => '1ml',
+            'date_applied' => '2026-05-20',
+        ]);
+    }
+
+    public function test_recep_cannot_store_vaccination_and_gets_403(): void
+    {
+        $owner = Owner::create([
+            'name' => 'Maria Gomez',
+            'email' => 'maria@example.com',
+            'phone' => '555-0987',
+            'address' => 'Calle Central 789',
+        ]);
+
+        $pet = Pet::create([
+            'owner_id' => $owner->id,
+            'name' => 'Fido',
+            'species' => 'perro',
+            'breed' => 'Pug',
+            'birthdate' => '2023-01-01',
+            'weight' => 8.50,
+        ]);
+
+        $vaccinationData = [
+            'name' => 'Parvovirus',
+            'dose' => '1ml',
+            'date_applied' => '2026-05-20',
+            'next_dose_due' => '2026-11-20',
+        ];
+
+        $response = $this->actingAs($this->recep)->post(route('pets.vaccinations.store', $pet), $vaccinationData);
+        $response->assertStatus(403);
+    }
+
+    public function test_any_authenticated_user_can_download_pdf_clinical_history(): void
+    {
+        $owner = Owner::create([
+            'name' => 'Maria Gomez',
+            'email' => 'maria@example.com',
+            'phone' => '555-0987',
+            'address' => 'Calle Central 789',
+        ]);
+
+        $pet = Pet::create([
+            'owner_id' => $owner->id,
+            'name' => 'Fido',
+            'species' => 'perro',
+            'breed' => 'Pug',
+            'birthdate' => '2023-01-01',
+            'weight' => 8.50,
+        ]);
+
+        $response = $this->actingAs($this->recep)->get(route('pets.pdf', $pet));
+        $response->assertStatus(200);
+        $response->assertHeader('content-type', 'application/pdf');
+    }
 }
+

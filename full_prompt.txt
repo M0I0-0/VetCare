@@ -1,0 +1,83 @@
+<USER_REQUEST>
+Eres un desarrollador senior de Laravel. Vas a construir un sistema de gestión veterinaria llamado "VetCare" paso a paso. 
+
+REGLA CRÍTICA: Después de completar cada fase, DETENTE y dime exactamente qué comando de git ejecutar para hacer el commit antes de continuar con la siguiente fase. No avances a la siguiente fase hasta que yo confirme.
+
+---
+
+## STACK
+- Laravel 11
+- MySQL
+- Laravel Breeze (autenticación)
+- barryvdh/laravel-dompdf (PDFs)
+- Mailtrap SMTP (emails)
+- Laravel Task Scheduling (cron jobs)
+- Blade + Tailwind CSS
+
+---
+
+## FASE 1 — Proyecto base y autenticación con roles
+
+1. Crea un proyecto Laravel 11 limpio.
+2. Configura el archivo .env con conexión a MySQL (base de datos: vetcare_db).
+3. Instala Laravel Breeze con Blade + Tailwind.
+4. Agrega la columna `role` (enum: admin, veterinario, recepcionista) a la tabla `users` en la migración existente.
+5. Crea un Middleware llamado `CheckRole` que proteja rutas según el rol del usuario.
+6. Crea un Seeder `UserSeeder` con 3 usuarios de prueba, uno por cada rol:
+   - admin@vetcare.com / password: admin123
+   - vet@vetcare.com / password: vet123
+   - recep@vetcare.com / password: recep123
+7. Define las rutas en `web.php` agrupadas por middleware de rol.
+8. Crea un layout base en Blade que muestre el menú según el rol autenticado.
+
+Al terminar esta fase, dime exactamente:
+"FASE 1 COMPLETA. Ejecuta: git add . && git commit -m 'feat: initial setup + auth with roles and seeder'"
+Luego espera mi confirmación para continuar.
+
+---
+
+## FASE 2 — Módulo Dueños y Mascotas con Soft Deletes
+
+1. Crea la migración para la tabla `owners` con campos: id, name, email, phone, address, timestamps.
+2. Crea la migración para la tabla `pets` con campos: id, owner_id (FK), name, species, breed, birthdate, weight, photo (nullable), deleted_at, timestamps.
+3. Activa SoftDeletes en el modelo `Pet` usando el trait `SoftDeletes`. Este es el módulo principal del sistema.
+4. Crea los modelos `Owner` y `Pet` con sus relaciones Eloquent correctas (Owner ha
+<truncated 5249 bytes>
+camente.
+7. Agrega en el README las instrucciones para activar el cron en el servidor: `* * * * * cd /ruta-proyecto && php artisan schedule:run >> /dev/null 2>&1`
+
+Al terminar esta fase, dime exactamente:
+"FASE 6 COMPLETA. Ejecuta: git add . && git commit -m 'feat: artisan command + task scheduling for vaccine reminders'"
+Luego espera mi confirmación para continuar.
+
+---
+
+## FASE 7 — Documentación final
+
+1. Crea el archivo `README.md` en la raíz del proyecto con las siguientes secciones:
+   - Descripción del sistema
+   - Requisitos (PHP 8.2+, Composer, MySQL, Node)
+   - Instrucciones de instalación paso a paso (clone, composer install, npm install, .env, migrate, seed, serve)
+   - Credenciales de prueba (los 3 usuarios del seeder)
+   - Cómo activar el cron job
+   - Diagrama Entidad-Relación en texto ASCII o Mermaid.js con las tablas: users, owners, pets, appointments, medical_records, vaccinations, notification_logs
+2. Asegúrate de que el `.gitignore` excluya correctamente: `.env`, `node_modules/`, `vendor/`, `storage/logs/`.
+
+Al terminar esta fase, dime exactamente:
+"FASE 7 COMPLETA. Ejecuta: git add . && git commit -m 'docs: README with ERD, install instructions and test credentials'"
+
+---
+
+## RECORDATORIO FINAL
+- Usa Laravel conventions en todo momento (nombres en inglés, singular para modelos, plural para tablas).
+- Todas las validaciones van en FormRequest, nunca inline en el controlador.
+- Los SoftDeletes SOLO en el modelo `Pet` (módulo principal).
+- Cada email debe tener una vista Blade separada en `resources/views/emails/`.
+- No saltes fases. Espera mi "ok" o "continúa" después de cada commit.
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-05-20T18:42:11-06:00.
+</ADDITIONAL_METADATA>
+<USER_SETTINGS_CHANGE>
+The user changed setting `Model Selection` from None to Gemini 3.5 Flash (High). No need to comment on this change if the user doesn't ask about it. If reporting what model you are, please use a human readable name instead of the exact string.
+</USER_SETTINGS_CHANGE>

@@ -10,6 +10,14 @@
                 {{ __('Expediente Médico') }}: {{ $pet->name }}
             </h2>
             <div class="flex gap-3">
+                <!-- PDF Download Button -->
+                <a href="{{ route('pets.pdf', $pet) }}" class="inline-flex items-center px-4 py-2 bg-emerald-650 hover:bg-emerald-600 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white font-bold text-sm rounded-xl transition-all shadow-md hover:shadow-lg hover:shadow-emerald-600/20">
+                    <svg class="w-4.5 h-4.5 me-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Descargar Historial (PDF)
+                </a>
+
                 @if(Auth::user()->role === 'admin' || Auth::user()->role === 'recepcionista')
                     <a href="{{ route('pets.edit', $pet) }}" class="inline-flex items-center px-4 py-2 border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-300 font-semibold text-sm rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors shadow-sm">
                         <svg class="w-4.5 h-4.5 me-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -142,92 +150,175 @@
                 </div>
             </div>
 
-            <!-- Future Modules Placeholders (Phase 3 & 4) -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- FASE 3: Historial Clínico & Cartilla de Vacunación con Agenda de Citas -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 
-                <!-- Historial Clínico Card -->
-                <div class="bg-white/60 dark:bg-gray-900/60 backdrop-blur-md rounded-3xl p-6 border border-gray-100 dark:border-gray-800/40 relative group overflow-hidden">
-                    <div class="absolute top-4 right-4">
-                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-3xs font-extrabold bg-indigo-500/10 text-indigo-500 border border-indigo-500/20 shadow-2xs">
-                            Fase 3
-                        </span>
-                    </div>
-                    <div class="space-y-4">
-                        <div class="h-10 w-10 rounded-xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center text-xl">
-                            📋
+                <!-- Clinical Logs and Tabs (Left - cols 2) -->
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="bg-white dark:bg-gray-900 rounded-3xl p-8 shadow-xl border border-gray-100 dark:border-gray-800/50">
+                        
+                        <!-- Tab Selector -->
+                        <div class="border-b border-gray-200 dark:border-gray-800 flex items-center justify-between pb-1 flex-wrap gap-4">
+                            <nav class="flex space-x-6" aria-label="Tabs">
+                                <button onclick="switchTab('consultas')" id="tab-consultas-btn" class="border-emerald-500 text-emerald-600 dark:text-emerald-400 font-bold border-b-2 py-4 px-1 text-sm transition-all focus:outline-none flex items-center gap-2">
+                                    📋 Historial de Consultas
+                                </button>
+                                <button onclick="switchTab('vacunas')" id="tab-vacunas-btn" class="border-transparent text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 font-bold border-b-2 py-4 px-1 text-sm transition-all focus:outline-none flex items-center gap-2">
+                                    💉 Cartilla de Vacunas
+                                </button>
+                            </nav>
+
+                            <!-- Role-Protected Action Buttons -->
+                            @if(Auth::user()->role === 'admin' || Auth::user()->role === 'veterinario')
+                                <div>
+                                    <a href="{{ route('pets.medical-records.create', $pet) }}" id="action-consulta-btn" class="inline-flex items-center px-4 py-2 bg-indigo-650 hover:bg-indigo-600 dark:bg-indigo-600 dark:hover:bg-indigo-500 text-white font-bold text-xs rounded-xl shadow-md transition-all">
+                                        + Nueva Consulta
+                                    </a>
+                                    <a href="{{ route('pets.vaccinations.create', $pet) }}" id="action-vacuna-btn" class="inline-flex items-center px-4 py-2 bg-emerald-650 hover:bg-emerald-600 dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-md transition-all hidden">
+                                        + Registrar Vacuna
+                                    </a>
+                                </div>
+                            @endif
                         </div>
-                        <div>
-                            <h4 class="font-extrabold text-base text-gray-800 dark:text-white flex items-center gap-1.5">
-                                Historial Clínico
-                            </h4>
-                            <p class="text-2xs text-gray-400 mt-0.5">Consultas y Recetas</p>
+
+                        <!-- TAB CONTENT 1: MEDICAL RECORDS -->
+                        <div id="tab-consultas-content" class="pt-6 space-y-6">
+                            @if($pet->medicalRecords->count() > 0)
+                                <div class="flow-root">
+                                    <ul role="list" class="-mb-8">
+                                        @foreach($pet->medicalRecords as $record)
+                                            <li>
+                                                <div class="relative pb-8">
+                                                    @if(!$loop->last)
+                                                        <span class="absolute top-5 left-5 -ml-px h-full w-0.5 bg-gray-200 dark:bg-gray-800" aria-hidden="true"></span>
+                                                    @endif
+                                                    <div class="relative flex items-start space-x-3">
+                                                        <div class="relative">
+                                                            <div class="h-10 w-10 rounded-full bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-500/20 text-indigo-500 flex items-center justify-center font-bold text-md shadow-sm">
+                                                                🩺
+                                                            </div>
+                                                        </div>
+                                                        <div class="min-w-0 flex-1 bg-gray-50/50 dark:bg-gray-950/20 p-5 rounded-2xl border border-gray-100 dark:border-gray-800/40">
+                                                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-1.5 mb-3">
+                                                                <div>
+                                                                    <p class="text-sm font-black text-gray-850 dark:text-white">Consulta Médica</p>
+                                                                    <p class="text-xs text-gray-400 mt-0.5">Atendido por: <span class="font-bold text-indigo-600 dark:text-indigo-400">{{ $record->veterinarian->name }}</span></p>
+                                                                </div>
+                                                                <div class="text-left sm:text-right">
+                                                                    <span class="text-xs font-bold text-gray-400 block">{{ \Carbon\Carbon::parse($record->created_at)->format('d/m/Y H:i') }}</span>
+                                                                    <span class="inline-flex items-center mt-1 px-2.5 py-0.5 rounded-full text-3xs font-extrabold bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-500/15">
+                                                                        {{ number_format($record->weight_at_visit, 2) }} kg
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="space-y-3 text-sm text-gray-700 dark:text-gray-300">
+                                                                <div>
+                                                                    <span class="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider block mb-1">Diagnóstico</span>
+                                                                    <p class="bg-white dark:bg-gray-950 p-3 rounded-xl border border-gray-100 dark:border-gray-850 text-xs font-medium leading-relaxed shadow-3xs">
+                                                                        {{ $record->diagnosis }}
+                                                                    </p>
+                                                                </div>
+                                                                <div>
+                                                                    <span class="text-xs font-black text-indigo-400 dark:text-indigo-500 uppercase tracking-wider block mb-1">Tratamiento / Receta</span>
+                                                                    <p class="bg-indigo-50/30 dark:bg-indigo-950/20 p-3 rounded-xl border border-indigo-100/50 dark:border-indigo-900/10 text-xs font-bold text-indigo-850 dark:text-indigo-300 leading-relaxed shadow-3xs">
+                                                                        💊 {{ $record->treatment }}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @else
+                                <div class="py-12 text-center">
+                                    <div class="h-16 w-16 bg-gray-50 dark:bg-gray-850 text-gray-300 rounded-full flex items-center justify-center text-3xl mx-auto shadow-inner mb-4">📋</div>
+                                    <h4 class="font-bold text-gray-850 dark:text-white text-md">Sin Consultas Médicas</h4>
+                                    <p class="text-xs text-gray-500 mt-1 max-w-sm mx-auto">No se han registrado consultas médicas en el historial clínico de esta mascota aún.</p>
+                                </div>
+                            @endif
                         </div>
-                        <p class="text-xs text-gray-500 leading-relaxed font-medium">
-                            El registro de consultas médicas, diagnósticos detallados, tratamientos y emisión de recetas en formato digital estará disponible en la **Fase 3**.
-                        </p>
-                        <div class="pt-2">
-                            <span class="inline-flex items-center text-3xs font-bold text-indigo-500 gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
-                                Próximamente
-                                <svg class="w-3 h-3 animate-ping" fill="currentColor" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" /></svg>
-                            </span>
+
+                        <!-- TAB CONTENT 2: VACCINATIONS -->
+                        <div id="tab-vacunas-content" class="pt-6 space-y-6 hidden">
+                            @if($pet->vaccinations->count() > 0)
+                                <div class="overflow-x-auto rounded-2xl border border-gray-100 dark:border-gray-800/40">
+                                    <table class="w-full text-left border-collapse">
+                                        <thead>
+                                            <tr class="bg-gray-50 dark:bg-gray-950/50 text-gray-500 dark:text-gray-400 text-xs font-bold border-b border-gray-100 dark:border-gray-800/50">
+                                                <th class="px-6 py-4">Fecha Aplicada</th>
+                                                <th class="px-6 py-4">Vacuna</th>
+                                                <th class="px-6 py-4">Dosis</th>
+                                                <th class="px-6 py-4 text-right">Próximo Refuerzo</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-gray-100 dark:divide-gray-800/50 text-sm text-gray-700 dark:text-gray-300">
+                                            @foreach($pet->vaccinations as $vaccine)
+                                                <tr class="hover:bg-gray-50/50 dark:hover:bg-gray-950/30 transition-colors">
+                                                    <td class="px-6 py-4 whitespace-nowrap text-xs font-bold text-gray-400">
+                                                        {{ \Carbon\Carbon::parse($vaccine->date_applied)->format('d/m/Y') }}
+                                                    </td>
+                                                    <td class="px-6 py-4 font-black text-gray-850 dark:text-white">
+                                                        💉 {{ $vaccine->name }}
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-xs font-bold">
+                                                        {{ $vaccine->dose }}
+                                                    </td>
+                                                    <td class="px-6 py-4 text-right whitespace-nowrap">
+                                                        @if($vaccine->next_dose_due)
+                                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-3xs font-extrabold bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400 border border-amber-100 dark:border-amber-500/20">
+                                                                {{ \Carbon\Carbon::parse($vaccine->next_dose_due)->format('d/m/Y') }}
+                                                            </span>
+                                                        @else
+                                                            <span class="text-xs text-gray-400 font-medium">N/A</span>
+                                                        @endif
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            @else
+                                <div class="py-12 text-center">
+                                    <div class="h-16 w-16 bg-gray-50 dark:bg-gray-850 text-gray-300 rounded-full flex items-center justify-center text-3xl mx-auto shadow-inner mb-4">💉</div>
+                                    <h4 class="font-bold text-gray-850 dark:text-white text-md">Sin Vacunas Registradas</h4>
+                                    <p class="text-xs text-gray-500 mt-1 max-w-sm mx-auto">No se han registrado aplicaciones de vacunas en la cartilla de esta mascota aún.</p>
+                                </div>
+                            @endif
                         </div>
+
                     </div>
                 </div>
 
-                <!-- Vacunas Card -->
-                <div class="bg-white/60 dark:bg-gray-900/60 backdrop-blur-md rounded-3xl p-6 border border-gray-100 dark:border-gray-800/40 relative group overflow-hidden">
-                    <div class="absolute top-4 right-4">
-                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-3xs font-extrabold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 shadow-2xs">
-                            Fase 3
-                        </span>
-                    </div>
-                    <div class="space-y-4">
-                        <div class="h-10 w-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-xl">
-                            💉
-                        </div>
-                        <div>
-                            <h4 class="font-extrabold text-base text-gray-800 dark:text-white flex items-center gap-1.5">
-                                Control de Vacunas
-                            </h4>
-                            <p class="text-2xs text-gray-400 mt-0.5">Inmunización y Dosis</p>
-                        </div>
-                        <p class="text-xs text-gray-500 leading-relaxed font-medium">
-                            La cartilla digital de inmunizaciones, control de dosis aplicadas, laboratorio y próximas fechas programadas de vacunación estará disponible en la **Fase 3**.
-                        </p>
-                        <div class="pt-2">
-                            <span class="inline-flex items-center text-3xs font-bold text-emerald-500 gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
-                                Próximamente
-                                <svg class="w-3 h-3 animate-ping" fill="currentColor" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" /></svg>
+                <!-- Appointments Placeholder (Right - col 1) -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white/60 dark:bg-gray-900/60 backdrop-blur-md rounded-3xl p-6 border border-gray-100 dark:border-gray-800/40 relative group overflow-hidden shadow-xl">
+                        <div class="absolute top-4 right-4">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-3xs font-extrabold bg-amber-500/10 text-amber-500 border border-amber-500/20 shadow-2xs">
+                                Fase 4
                             </span>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Citas Card -->
-                <div class="bg-white/60 dark:bg-gray-900/60 backdrop-blur-md rounded-3xl p-6 border border-gray-100 dark:border-gray-800/40 relative group overflow-hidden">
-                    <div class="absolute top-4 right-4">
-                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-3xs font-extrabold bg-amber-500/10 text-amber-500 border border-amber-500/20 shadow-2xs">
-                            Fase 4
-                        </span>
-                    </div>
-                    <div class="space-y-4">
-                        <div class="h-10 w-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center text-xl">
-                            📅
-                        </div>
-                        <div>
-                            <h4 class="font-extrabold text-base text-gray-800 dark:text-white flex items-center gap-1.5">
-                                Agenda de Citas
-                            </h4>
-                            <p class="text-2xs text-gray-400 mt-0.5">Recordatorios Automáticos</p>
-                        </div>
-                        <p class="text-xs text-gray-500 leading-relaxed font-medium">
-                            La gestión de turnos veterinarios, recordatorios automatizados por correo electrónico a propietarios y panel interactivo de citas estará disponible en la **Fase 4**.
-                        </p>
-                        <div class="pt-2">
-                            <span class="inline-flex items-center text-3xs font-bold text-amber-500 gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
-                                Próximamente
-                                <svg class="w-3 h-3 animate-ping" fill="currentColor" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" /></svg>
-                            </span>
+                        <div class="space-y-4">
+                            <div class="h-10 w-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center text-xl">
+                                📅
+                            </div>
+                            <div>
+                                <h4 class="font-extrabold text-base text-gray-800 dark:text-white flex items-center gap-1.5">
+                                    Agenda de Citas
+                                </h4>
+                                <p class="text-2xs text-gray-400 mt-0.5">Recordatorios Automáticos</p>
+                            </div>
+                            <p class="text-xs text-gray-500 leading-relaxed font-medium">
+                                La gestión de turnos veterinarios, recordatorios automatizados por correo electrónico a propietarios y panel interactivo de citas estará disponible en la **Fase 4**.
+                            </p>
+                            <div class="pt-2">
+                                <span class="inline-flex items-center text-3xs font-bold text-amber-500 gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
+                                    Próximamente
+                                    <svg class="w-3 h-3 animate-ping" fill="currentColor" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" /></svg>
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -236,4 +327,37 @@
 
         </div>
     </div>
+
+    <!-- Switch Tab Client-Side Javascript -->
+    <script>
+        function switchTab(tab) {
+            const consultasTab = document.getElementById('tab-consultas-content');
+            const vacunasTab = document.getElementById('tab-vacunas-content');
+            const consultasBtn = document.getElementById('tab-consultas-btn');
+            const vacunasBtn = document.getElementById('tab-vacunas-btn');
+            
+            const actionConsultaBtn = document.getElementById('action-consulta-btn');
+            const actionVacunaBtn = document.getElementById('action-vacuna-btn');
+
+            if (tab === 'consultas') {
+                consultasTab.classList.remove('hidden');
+                vacunasTab.classList.add('hidden');
+                
+                consultasBtn.className = "border-emerald-500 text-emerald-600 dark:text-emerald-400 font-bold border-b-2 py-4 px-1 text-sm transition-all focus:outline-none flex items-center gap-2";
+                vacunasBtn.className = "border-transparent text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 font-bold border-b-2 py-4 px-1 text-sm transition-all focus:outline-none flex items-center gap-2";
+                
+                if (actionConsultaBtn) actionConsultaBtn.classList.remove('hidden');
+                if (actionVacunaBtn) actionVacunaBtn.classList.add('hidden');
+            } else {
+                consultasTab.classList.add('hidden');
+                vacunasTab.classList.remove('hidden');
+                
+                consultasBtn.className = "border-transparent text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 font-bold border-b-2 py-4 px-1 text-sm transition-all focus:outline-none flex items-center gap-2";
+                vacunasBtn.className = "border-emerald-500 text-emerald-600 dark:text-emerald-400 font-bold border-b-2 py-4 px-1 text-sm transition-all focus:outline-none flex items-center gap-2";
+                
+                if (actionConsultaBtn) actionConsultaBtn.classList.add('hidden');
+                if (actionVacunaBtn) actionVacunaBtn.classList.remove('hidden');
+            }
+        }
+    </script>
 </x-app-layout>

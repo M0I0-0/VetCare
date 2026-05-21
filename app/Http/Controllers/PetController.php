@@ -9,6 +9,7 @@ use App\Http\Requests\UpdatePetRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Storage;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class PetController extends Controller
 {
@@ -53,8 +54,22 @@ class PetController extends Controller
      */
     public function show(Pet $pet): View
     {
-        $pet->load('owner');
+        $pet->load(['owner', 'medicalRecords.veterinarian', 'vaccinations']);
         return view('pets.show', compact('pet'));
+    }
+
+    /**
+     * Download the clinical history of the pet in PDF format.
+     */
+    public function downloadPdf(Pet $pet): \Illuminate\Http\Response
+    {
+        $pet->load(['owner', 'medicalRecords.veterinarian', 'vaccinations']);
+        
+        $pdf = Pdf::loadView('pets.pdf', compact('pet'));
+        
+        $filename = 'historial_clinico_' . strtolower(str_replace(' ', '_', $pet->name)) . '.pdf';
+        
+        return $pdf->download($filename);
     }
 
     /**

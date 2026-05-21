@@ -3,6 +3,8 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\PetController;
+use App\Http\Controllers\MedicalRecordController;
+use App\Http\Controllers\VaccinationController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -54,6 +56,17 @@ Route::middleware('auth')->group(function () {
     Route::post('pets/{id}/restore', [PetController::class, 'restore'])->name('pets.restore');
     Route::delete('pets/{id}/force-delete', [PetController::class, 'forceDelete'])->name('pets.force-delete');
     Route::resource('pets', PetController::class);
+
+    // Phase 3: Medical Records & Vaccinations (Only Admin and Veterinario can create)
+    Route::middleware('role:admin,veterinario')->group(function () {
+        Route::get('pets/{pet}/medical-records/create', [MedicalRecordController::class, 'create'])->name('pets.medical-records.create');
+        Route::post('pets/{pet}/medical-records', [MedicalRecordController::class, 'store'])->name('pets.medical-records.store');
+        Route::get('pets/{pet}/vaccinations/create', [VaccinationController::class, 'create'])->name('pets.vaccinations.create');
+        Route::post('pets/{pet}/vaccinations', [VaccinationController::class, 'store'])->name('pets.vaccinations.store');
+    });
+
+    // PDF Clinical History Export (Accessible by all roles)
+    Route::get('pets/{pet}/pdf', [PetController::class, 'downloadPdf'])->name('pets.pdf');
 });
 
 require __DIR__.'/auth.php';

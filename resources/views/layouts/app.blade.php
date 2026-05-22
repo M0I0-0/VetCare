@@ -21,7 +21,7 @@
         </style>
     </head>
     <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gradient-to-tr from-gray-50 via-slate-50 to-emerald-50/30 dark:from-gray-950 dark:via-slate-900 dark:to-emerald-950/20 text-gray-800 dark:text-gray-200">
+        <div class="min-h-screen bg-gradient-to-tr from-[#fbfaf7] via-[#f5f8f8] to-[#e6f4f2] text-gray-700">
             @include('layouts.navigation')
 
             <!-- Page Heading -->

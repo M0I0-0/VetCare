@@ -1,4 +1,4 @@
-<nav x-data="{ open: false }" class="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800/50 sticky top-0 z-50">
+<nav x-data="{ open: false }" class="bg-white/95 backdrop-blur-md border-b border-orange-100/60 sticky top-0 z-50 shadow-sm">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
@@ -6,100 +6,93 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}" class="flex items-center gap-2 group">
-                        <div class="h-9 w-9 rounded-xl bg-gradient-to-tr from-emerald-400 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-500/20 transform group-hover:scale-105 transition-transform duration-200">
-                            <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                            </svg>
+                        <div class="h-10 w-10 rounded-2xl bg-gradient-to-tr from-[#68d391] to-[#4fd1c5] flex items-center justify-center shadow-md shadow-emerald-200/50 transform group-hover:scale-105 transition-transform duration-200">
+                            <!-- Friendly animal paw icon -->
+                            <span class="text-xl">🐾</span>
                         </div>
-                        <span class="font-bold text-xl bg-gradient-to-r from-emerald-500 via-teal-600 to-indigo-600 dark:from-emerald-400 dark:via-teal-400 dark:to-indigo-400 bg-clip-text text-transparent tracking-tight">VetCare</span>
+                        <span class="font-extrabold text-2xl bg-gradient-to-r from-teal-500 via-emerald-500 to-cyan-600 bg-clip-text text-transparent tracking-tight">VetCare</span>
                     </a>
                 </div>
-
+ 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-6 sm:-my-px sm:ms-10 sm:flex">
                     @php
                         $role = Auth::user()->role;
                     @endphp
-
+ 
                     <!-- Admin Links -->
                     @if($role === 'admin')
-                        <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')" class="text-sm font-medium transition-colors">
-                            {{ __('Panel Admin') }}
+                        <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')" class="text-sm font-medium transition-colors hover:text-teal-600">
+                            🏥 {{ __('Panel Admin') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('owners.index')" :active="request()->routeIs('owners.*')" class="text-sm font-medium transition-colors">
-                            {{ __('Dueños') }}
+                        <x-nav-link :href="route('owners.index')" :active="request()->routeIs('owners.*')" class="text-sm font-medium transition-colors hover:text-teal-600">
+                            👥 {{ __('Dueños') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('pets.index')" :active="request()->routeIs('pets.*')" class="text-sm font-medium transition-colors">
-                            {{ __('Mascotas') }}
+                        <x-nav-link :href="route('pets.index')" :active="request()->routeIs('pets.*')" class="text-sm font-medium transition-colors hover:text-teal-600">
+                            🐶 {{ __('Mascotas') }}
                         </x-nav-link>
-                        <x-nav-link href="#" :active="false" class="text-sm font-medium text-gray-400 dark:text-gray-600 cursor-not-allowed">
-                            {{ __('Citas (Próximamente)') }}
-                        </x-nav-link>
-                        <x-nav-link href="#" :active="false" class="text-sm font-medium text-gray-400 dark:text-gray-600 cursor-not-allowed">
-                            {{ __('Historiales (Próximamente)') }}
+                        <x-nav-link :href="route('appointments.index')" :active="request()->routeIs('appointments.*')" class="text-sm font-medium transition-colors hover:text-teal-600">
+                            📅 {{ __('Citas') }}
                         </x-nav-link>
                     @endif
-
+ 
                     <!-- Veterinario Links -->
                     @if($role === 'veterinario')
-                        <x-nav-link :href="route('vet.dashboard')" :active="request()->routeIs('vet.dashboard')" class="text-sm font-medium transition-colors">
-                            {{ __('Consultas Vet') }}
+                        <x-nav-link :href="route('vet.dashboard')" :active="request()->routeIs('vet.dashboard')" class="text-sm font-medium transition-colors hover:text-teal-600">
+                            🩺 {{ __('Consultas Vet') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('pets.index')" :active="request()->routeIs('pets.*')" class="text-sm font-medium transition-colors">
-                            {{ __('Mis Mascotas') }}
+                        <x-nav-link :href="route('pets.index')" :active="request()->routeIs('pets.*')" class="text-sm font-medium transition-colors hover:text-teal-600">
+                            🐱 {{ __('Mis Mascotas') }}
                         </x-nav-link>
-                        <x-nav-link href="#" :active="false" class="text-sm font-medium text-gray-400 dark:text-gray-600 cursor-not-allowed">
-                            {{ __('Agenda Citas (Próximamente)') }}
-                        </x-nav-link>
-                        <x-nav-link href="#" :active="false" class="text-sm font-medium text-gray-400 dark:text-gray-600 cursor-not-allowed">
-                            {{ __('Historial Clínico (Próximamente)') }}
+                        <x-nav-link :href="route('appointments.index')" :active="request()->routeIs('appointments.*')" class="text-sm font-medium transition-colors hover:text-teal-600">
+                            📅 {{ __('Agenda Citas') }}
                         </x-nav-link>
                     @endif
-
+ 
                     <!-- Recepcionista Links -->
                     @if($role === 'recepcionista')
-                        <x-nav-link :href="route('recep.dashboard')" :active="request()->routeIs('recep.dashboard')" class="text-sm font-medium transition-colors">
-                            {{ __('Recepción') }}
+                        <x-nav-link :href="route('recep.dashboard')" :active="request()->routeIs('recep.dashboard')" class="text-sm font-medium transition-colors hover:text-teal-600">
+                            🛎️ {{ __('Recepción') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('owners.index')" :active="request()->routeIs('owners.*')" class="text-sm font-medium transition-colors">
-                            {{ __('Dueños') }}
+                        <x-nav-link :href="route('owners.index')" :active="request()->routeIs('owners.*')" class="text-sm font-medium transition-colors hover:text-teal-600">
+                            👥 {{ __('Dueños') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('pets.index')" :active="request()->routeIs('pets.*')" class="text-sm font-medium transition-colors">
-                            {{ __('Mascotas') }}
+                        <x-nav-link :href="route('pets.index')" :active="request()->routeIs('pets.*')" class="text-sm font-medium transition-colors hover:text-teal-600">
+                            🐶 {{ __('Mascotas') }}
                         </x-nav-link>
-                        <x-nav-link href="#" :active="false" class="text-sm font-medium text-gray-400 dark:text-gray-600 cursor-not-allowed">
-                            {{ __('Citas (Próximamente)') }}
+                        <x-nav-link :href="route('appointments.index')" :active="request()->routeIs('appointments.*')" class="text-sm font-medium transition-colors hover:text-teal-600">
+                            📅 {{ __('Citas') }}
                         </x-nav-link>
                     @endif
                 </div>
             </div>
-
+ 
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 <!-- Role Badge -->
                 <div class="me-3">
                     @if($role === 'admin')
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-500/20 shadow-sm">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 me-1.5 animate-pulse"></span>
-                            Admin
+                        <span class="inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-bold bg-cyan-50 text-cyan-700 border border-cyan-200/50 shadow-sm">
+                            <span class="w-2 h-2 rounded-full bg-cyan-400 me-1.5 animate-pulse"></span>
+                            Administrador
                         </span>
                     @elseif($role === 'veterinario')
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400 border border-indigo-200/50 dark:border-indigo-500/20 shadow-sm">
-                            <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 me-1.5 animate-pulse"></span>
+                        <span class="inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200/50 shadow-sm">
+                            <span class="w-2 h-2 rounded-full bg-indigo-400 me-1.5 animate-pulse"></span>
                             Veterinario
                         </span>
                     @else
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-teal-50 text-teal-700 dark:bg-teal-500/10 dark:text-teal-400 border border-teal-200/50 dark:border-teal-500/20 shadow-sm">
-                            <span class="w-1.5 h-1.5 rounded-full bg-teal-500 me-1.5 animate-pulse"></span>
-                            Recepción
+                        <span class="inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-bold bg-teal-50 text-teal-700 border border-teal-200/50 shadow-sm">
+                            <span class="w-2 h-2 rounded-full bg-teal-400 me-1.5 animate-pulse"></span>
+                            Recepcionista
                         </span>
                     @endif
                 </div>
-
+ 
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
-                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-xl text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150 border border-gray-200/20">
-                            <div>{{ Auth::user()->name }}</div>
+                        <button class="inline-flex items-center px-4 py-2 border border-transparent text-sm leading-4 font-bold rounded-2xl text-gray-600 bg-orange-50/50 hover:bg-orange-50 hover:text-teal-600 focus:outline-none transition ease-in-out duration-150 border border-orange-100/30">
+                            <div>👤 {{ Auth::user()->name }}</div>
                             <div class="ms-1">
                                 <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />

@@ -1,12 +1,12 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-2xl text-gray-800 dark:text-gray-100 leading-tight flex items-center gap-2">
-                📅 Agenda de Citas
+            <h2 class="font-extrabold text-2xl text-teal-800 leading-tight flex items-center gap-2">
+                📅 {{ __('Agenda de Citas') }}
             </h2>
             @if(Auth::user()->role !== 'recepcionista')
-                <a href="{{ route('appointments.create') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm rounded-xl transition-all shadow-md hover:shadow-lg hover:shadow-indigo-600/20">
-                    <svg class="w-4 h-4 me-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <a href="{{ route('appointments.create') }}" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-teal-400 to-emerald-500 text-white font-bold text-sm rounded-2xl hover:shadow-lg hover:shadow-teal-500/20 transform hover:-translate-y-0.5 transition-all duration-150 shadow-sm">
+                    <svg class="w-4.5 h-4.5 me-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                     </svg>
                     Nueva Cita
@@ -15,15 +15,15 @@
         </div>
     </x-slot>
 
-    <div class="py-12">
+    <div class="py-10">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
             @if(session('message'))
-                <div class="p-4 bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 rounded-2xl flex items-center gap-3">
-                    <svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <div class="p-4 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-2xl flex items-center gap-3 shadow-sm">
+                    <svg class="h-5 w-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <span class="font-semibold">{{ session('message') }}</span>
+                    <span class="font-bold">{{ session('message') }}</span>
                 </div>
             @endif
 
@@ -35,83 +35,108 @@
                 $hoy       = \App\Models\Appointment::whereDate('scheduled_at', today())->count();
             @endphp
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <div class="bg-white dark:bg-gray-900 rounded-2xl p-5 border border-gray-100 dark:border-gray-800/50 shadow text-center">
-                    <div class="text-3xl font-black text-gray-800 dark:text-white">{{ $total }}</div>
-                    <div class="text-xs text-gray-400 font-bold uppercase tracking-wider mt-1">Total Citas</div>
+                <div class="bg-white rounded-2xl p-5 border border-teal-100/50 shadow-sm text-center">
+                    <div class="text-3xl font-black text-teal-800">{{ $total }}</div>
+                    <div class="text-xs text-teal-600/70 font-bold uppercase tracking-wider mt-1">Total Citas</div>
                 </div>
-                <div class="bg-amber-50 dark:bg-amber-950/20 rounded-2xl p-5 border border-amber-200/60 dark:border-amber-800/30 shadow text-center">
-                    <div class="text-3xl font-black text-amber-600 dark:text-amber-400">{{ $pendiente }}</div>
-                    <div class="text-xs text-amber-500 font-bold uppercase tracking-wider mt-1">Pendientes</div>
+                <div class="bg-amber-50/60 rounded-2xl p-5 border border-amber-200/50 shadow-sm text-center">
+                    <div class="text-3xl font-black text-amber-700">{{ $pendiente }}</div>
+                    <div class="text-xs text-amber-600/70 font-bold uppercase tracking-wider mt-1">Pendientes</div>
                 </div>
-                <div class="bg-emerald-50 dark:bg-emerald-950/20 rounded-2xl p-5 border border-emerald-200/60 dark:border-emerald-800/30 shadow text-center">
-                    <div class="text-3xl font-black text-emerald-600 dark:text-emerald-400">{{ $confirmada }}</div>
-                    <div class="text-xs text-emerald-500 font-bold uppercase tracking-wider mt-1">Confirmadas</div>
+                <div class="bg-emerald-50/60 rounded-2xl p-5 border border-emerald-200/50 shadow-sm text-center">
+                    <div class="text-3xl font-black text-emerald-700">{{ $confirmada }}</div>
+                    <div class="text-xs text-emerald-600/70 font-bold uppercase tracking-wider mt-1">Confirmadas</div>
                 </div>
-                <div class="bg-indigo-50 dark:bg-indigo-950/20 rounded-2xl p-5 border border-indigo-200/60 dark:border-indigo-800/30 shadow text-center">
-                    <div class="text-3xl font-black text-indigo-600 dark:text-indigo-400">{{ $hoy }}</div>
-                    <div class="text-xs text-indigo-500 font-bold uppercase tracking-wider mt-1">Hoy</div>
+                <div class="bg-orange-50/60 rounded-2xl p-5 border border-orange-200/50 shadow-sm text-center">
+                    <div class="text-3xl font-black text-orange-700">{{ $hoy }}</div>
+                    <div class="text-xs text-orange-600/70 font-bold uppercase tracking-wider mt-1">Hoy</div>
                 </div>
             </div>
 
-            <div class="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800/50 overflow-hidden">
+            <div class="bg-white rounded-[2rem] shadow-sm border border-teal-100/60 overflow-hidden">
+                <div class="p-6 border-b border-teal-50/50 flex justify-between items-center bg-teal-50/10">
+                    <h3 class="text-sm font-bold text-teal-700 uppercase tracking-wider">Citas programadas en la veterinaria</h3>
+                    <span class="px-3.5 py-1.5 rounded-full text-xs font-extrabold bg-teal-50 text-teal-700 border border-teal-100">
+                        Página actual: {{ $appointments->count() }}
+                    </span>
+                </div>
+
                 @if($appointments->count() > 0)
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
-                                <tr class="bg-gray-50 dark:bg-gray-950/50 text-gray-500 dark:text-gray-400 text-xs font-bold border-b border-gray-100 dark:border-gray-800/50">
-                                    <th class="px-6 py-4">Fecha / Hora</th>
-                                    <th class="px-6 py-4">Mascota</th>
-                                    <th class="px-6 py-4">Propietario</th>
-                                    <th class="px-6 py-4">Veterinario</th>
-                                    <th class="px-6 py-4">Motivo</th>
-                                    <th class="px-6 py-4">Estado</th>
-                                    <th class="px-6 py-4 text-right">Acciones</th>
+                                <tr class="bg-orange-50/30 text-teal-800 text-xs font-extrabold uppercase border-b border-teal-50">
+                                    <th class="py-4 px-6">Fecha / Hora</th>
+                                    <th class="py-4 px-6">Mascota</th>
+                                    <th class="py-4 px-6">Propietario</th>
+                                    <th class="py-4 px-6">Veterinario</th>
+                                    <th class="py-4 px-6">Motivo</th>
+                                    <th class="py-4 px-6">Estado</th>
+                                    <th class="py-4 px-6 text-right">Acciones</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-100 dark:divide-gray-800/50 text-sm">
+                            <tbody class="divide-y divide-teal-50/30 text-sm">
                                 @foreach($appointments as $appt)
                                     @php
                                         $statusColors = [
-                                            'pendiente'  => 'bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400 border-amber-100 dark:border-amber-500/20',
-                                            'confirmada' => 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 border-emerald-100 dark:border-emerald-500/20',
-                                            'completada' => 'bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-400 border-blue-100 dark:border-blue-500/20',
-                                            'cancelada'  => 'bg-rose-50 text-rose-700 dark:bg-rose-500/10 dark:text-rose-400 border-rose-100 dark:border-rose-500/20',
+                                            'pendiente'  => 'bg-amber-50 text-amber-700 border-amber-100 shadow-3xs',
+                                            'confirmada' => 'bg-emerald-50 text-emerald-700 border-emerald-100 shadow-3xs',
+                                            'completada' => 'bg-teal-50 text-teal-700 border-teal-100 shadow-3xs',
+                                            'cancelada'  => 'bg-rose-50 text-rose-700 border-rose-100 shadow-3xs',
                                         ];
-                                        $color = $statusColors[$appt->status] ?? 'bg-gray-100 text-gray-600';
+                                        $color = $statusColors[$appt->status] ?? 'bg-gray-50 text-gray-700 border-gray-100';
                                         $isPast = $appt->scheduled_at->isPast();
                                     @endphp
-                                    <tr class="hover:bg-gray-50/50 dark:hover:bg-gray-950/30 transition-colors {{ $isPast && $appt->status === 'pendiente' ? 'opacity-60' : '' }}">
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="font-bold text-gray-800 dark:text-white text-sm">{{ $appt->scheduled_at->format('d/m/Y') }}</div>
-                                            <div class="text-xs text-gray-400 font-medium">{{ $appt->scheduled_at->format('H:i') }} hrs</div>
+                                    <tr class="hover:bg-[#fbfbf8]/50 transition-colors {{ $isPast && $appt->status === 'pendiente' ? 'opacity-60' : '' }}">
+                                        <td class="py-4 px-6 whitespace-nowrap">
+                                            <div class="font-extrabold text-teal-950 text-sm flex items-center gap-1.5">
+                                                📅 {{ $appt->scheduled_at->format('d/m/Y') }}
+                                            </div>
+                                            <div class="text-xs text-gray-500 font-semibold mt-1">⏰ {{ $appt->scheduled_at->format('H:i') }} hrs</div>
                                         </td>
-                                        <td class="px-6 py-4">
-                                            <a href="{{ route('pets.show', $appt->pet) }}" class="font-bold text-indigo-600 dark:text-indigo-400 hover:underline">{{ $appt->pet->name }}</a>
-                                            <div class="text-xs text-gray-400 capitalize">{{ $appt->pet->species }}</div>
+                                        <td class="py-4 px-6">
+                                            <a href="{{ route('pets.show', $appt->pet) }}" class="font-extrabold text-teal-600 hover:text-teal-800 hover:underline flex items-center gap-1.5 text-sm">
+                                                @if(strtolower($appt->pet->species) === 'perro') 🐶
+                                                @elseif(strtolower($appt->pet->species) === 'gato') 🐱
+                                                @elseif(strtolower($appt->pet->species) === 'ave') 🦜
+                                                @elseif(strtolower($appt->pet->species) === 'conejo') 🐰
+                                                @else 🐾
+                                                @endif
+                                                {{ $appt->pet->name }}
+                                            </a>
+                                            <div class="text-xs text-gray-400 capitalize font-medium mt-1">🧬 {{ $appt->pet->species }}</div>
                                         </td>
-                                        <td class="px-6 py-4">
-                                            <span class="text-gray-700 dark:text-gray-300 font-medium text-xs">{{ $appt->pet->owner->name ?? '—' }}</span>
+                                        <td class="py-4 px-6">
+                                            @if($appt->pet->owner)
+                                                <a href="{{ route('owners.show', $appt->pet->owner) }}" class="text-teal-700 hover:text-teal-900 font-bold hover:underline text-xs flex items-center gap-1">
+                                                    👤 {{ $appt->pet->owner->name }}
+                                                </a>
+                                            @else
+                                                <span class="text-gray-400 text-xs font-semibold">👤 Sin dueño</span>
+                                            @endif
                                         </td>
-                                        <td class="px-6 py-4">
-                                            <span class="text-gray-700 dark:text-gray-300 font-medium text-xs">{{ $appt->veterinarian->name }}</span>
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            <span class="text-xs font-semibold text-gray-600 dark:text-gray-400">
-                                                {{ \App\Models\Appointment::$reasons[$appt->reason] ?? $appt->reason }}
+                                        <td class="py-4 px-6">
+                                            <span class="text-teal-900 font-bold text-xs flex items-center gap-1">
+                                                🥼 {{ $appt->veterinarian->name }}
                                             </span>
                                         </td>
-                                        <td class="px-6 py-4">
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border {{ $color }}">
+                                        <td class="py-4 px-6">
+                                            <span class="text-xs font-semibold text-gray-600">
+                                                📋 {{ \App\Models\Appointment::$reasons[$appt->reason] ?? $appt->reason }}
+                                            </span>
+                                        </td>
+                                        <td class="py-4 px-6">
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-extrabold border {{ $color }}">
                                                 {{ \App\Models\Appointment::$statuses[$appt->status] ?? $appt->status }}
                                             </span>
                                         </td>
-                                        <td class="px-6 py-4 text-right whitespace-nowrap">
-                                            <a href="{{ route('appointments.show', $appt) }}" class="text-gray-500 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors font-bold text-xs me-3">Ver</a>
+                                        <td class="py-4 px-6 text-right whitespace-nowrap">
+                                            <a href="{{ route('appointments.show', $appt) }}" class="inline-flex items-center px-3 py-1 bg-teal-50 border border-teal-100 hover:bg-teal-100 text-teal-700 font-bold text-xs rounded-xl transition-all shadow-3xs me-2">Ver</a>
                                             @if(Auth::user()->role !== 'recepcionista')
-                                                <a href="{{ route('appointments.edit', $appt) }}" class="text-gray-500 hover:text-amber-600 dark:hover:text-amber-400 transition-colors font-bold text-xs me-3">Editar</a>
+                                                <a href="{{ route('appointments.edit', $appt) }}" class="inline-flex items-center px-3 py-1 bg-amber-50 border border-amber-100 hover:bg-amber-100 text-amber-700 font-bold text-xs rounded-xl transition-all shadow-3xs me-2">Editar</a>
                                                 <form action="{{ route('appointments.destroy', $appt) }}" method="POST" class="inline" onsubmit="return confirm('¿Eliminar esta cita?');">
                                                     @csrf @method('DELETE')
-                                                    <button type="submit" class="text-gray-500 hover:text-rose-600 dark:hover:text-rose-400 transition-colors font-bold text-xs">Eliminar</button>
+                                                    <button type="submit" class="inline-flex items-center px-3 py-1 bg-rose-50 border border-rose-100 hover:bg-rose-100 text-rose-700 font-bold text-xs rounded-xl transition-all shadow-3xs">Eliminar</button>
                                                 </form>
                                             @endif
                                         </td>
@@ -120,16 +145,16 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="px-6 py-4 border-t border-gray-100 dark:border-gray-800/50">
+                    <div class="p-6 border-t border-teal-50 bg-teal-50/5">
                         {{ $appointments->links() }}
                     </div>
                 @else
                     <div class="py-20 text-center">
-                        <div class="h-20 w-20 bg-indigo-50 dark:bg-indigo-950/20 text-indigo-300 rounded-full flex items-center justify-center text-4xl mx-auto shadow-inner mb-5">📅</div>
-                        <h3 class="font-bold text-gray-800 dark:text-white text-lg mb-2">Sin Citas Programadas</h3>
-                        <p class="text-sm text-gray-500 mb-6 max-w-sm mx-auto">No hay citas en el sistema todavía. ¡Crea la primera cita para comenzar a gestionar la agenda!</p>
+                        <div class="h-20 w-20 bg-orange-50 text-orange-500 rounded-full flex items-center justify-center text-4xl mx-auto shadow-inner mb-5 border border-orange-100">📅</div>
+                        <h3 class="font-extrabold text-teal-800 text-lg mb-2">Sin Citas Programadas</h3>
+                        <p class="text-xs text-gray-500 mb-6 max-w-sm mx-auto">No hay citas en el sistema todavía. ¡Crea la primera cita para comenzar a gestionar la agenda de la clínica!</p>
                         @if(Auth::user()->role !== 'recepcionista')
-                            <a href="{{ route('appointments.create') }}" class="inline-flex items-center px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm rounded-xl shadow-md transition-all">
+                            <a href="{{ route('appointments.create') }}" class="inline-flex items-center px-5 py-2.5 bg-gradient-to-r from-teal-400 to-emerald-500 text-white font-bold text-sm rounded-2xl hover:shadow-lg hover:shadow-teal-500/20 transform hover:-translate-y-0.5 transition-all">
                                 + Programar Primera Cita
                             </a>
                         @endif
@@ -139,3 +164,4 @@
         </div>
     </div>
 </x-app-layout>
+

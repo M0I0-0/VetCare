@@ -1,58 +1,164 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# VetCare 🐾
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Descripción del sistema
+VetCare es una plataforma web de gestión veterinaria desarrollada con **Laravel 11**. Permite registrar dueños y sus mascotas, manejar historiales clínicos, vacunas, programar citas, enviar recordatorios automáticos por email y generar PDF de informes. La UI está construida con **Blade** y **Tailwind CSS**, ofreciendo una experiencia premium y responsive.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Requisitos
+- PHP 8.2+ (con extensiones OpenSSL, PDO, Mbstring, etc.)
+- Composer 2.x
+- Node.js 20.x y npm 10.x
+- MySQL 8.x (base de datos: `vetcare_db`)
+- Mailtrap (para pruebas de envío de email)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Instalación paso a paso
+1. **Clonar el repositorio**
+   ```bash
+   git clone <repo-url> vetcare
+   cd vetcare
+   ```
+2. **Instalar dependencias de PHP**
+   ```bash
+   composer install
+   ```
+3. **Instalar dependencias de frontend**
+   ```bash
+   npm install && npm run build
+   ```
+4. **Configurar el archivo `.env`**
+   - Copiar el ejemplo y ajustar la conexión a MySQL:
+     ```bash
+     cp .env.example .env
+     ```
+   - Editar los valores:
+     ```env
+     DB_CONNECTION=mysql
+     DB_HOST=127.0.0.1
+     DB_PORT=3306
+     DB_DATABASE=vetcare_db
+     DB_USERNAME=root
+     DB_PASSWORD=your_password
 
-## Learning Laravel
+     MAIL_MAILER=smtp
+     MAIL_HOST=sandbox.smtp.mailtrap.io
+     MAIL_PORT=2525
+     MAIL_USERNAME=your_mailtrap_username
+     MAIL_PASSWORD=your_mailtrap_password
+     MAIL_FROM_ADDRESS="noreply@vetcare.com"
+     MAIL_FROM_NAME="VetCare Sistema"
+     ```
+5. **Generar la clave de aplicación**
+   ```bash
+   php artisan key:generate
+   ```
+6. **Ejecutar migraciones y seeders**
+   ```bash
+   php artisan migrate:fresh --seed
+   ```
+7. **Levantar el servidor de desarrollo**
+   ```bash
+   php artisan serve
+   ```
+   Acceder a `http://localhost:8000`.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+---
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Credenciales de prueba (Seeder)
+| Rol | Email | Contraseña |
+|-----|---------------------|------------|
+| **Admin** | `admin@vetcare.com` | `admin123` |
+| **Veterinario** | `vet@vetcare.com` | `vet123` |
+| **Recepcionista** | `recep@vetcare.com` | `recep123` |
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+---
 
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+## Activación del Cron (Scheduler)
+Para que los recordatorios de citas y vacunas se envíen automáticamente, habilite el scheduler de Laravel en el crontab del servidor:
+```cron
+* * * * * cd /ruta/a/tu/proyecto && php artisan schedule:run >> /dev/null 2>&1
 ```
+- **Citas**: se envían diariamente a las 08:00 AM (`vetcare:send-reminders`).
+- **Vacunas**: se envían cada lunes a las 09:00 AM (`vetcare:vaccine-reminders`).
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+---
 
-## Contributing
+## Diagrama Entidad‑Relación (ERD)
+```mermaid
+---
+  title VetCare ER Diagram
+  erDiagram
+    USER {
+        int id PK
+        string name
+        string email
+        enum role "admin|veterinario|recepcionista"
+    }
+    OWNER {
+        int id PK
+        string name
+        string email
+        string phone
+        string address
+    }
+    PET {
+        int id PK
+        int owner_id FK
+        string name
+        string species
+        string breed
+        date birthdate
+        decimal weight
+        string photo
+        datetime deleted_at
+    }
+    APPOINTMENT {
+        int id PK
+        int pet_id FK
+        int user_id FK
+        datetime scheduled_at
+        enum reason "consulta_general|vacunacion|revision_post_operatoria|otro"
+        text notes
+        enum status "pendiente|confirmada|completada|cancelada"
+        bool reminder_sent
+    }
+    MEDICAL_RECORD {
+        int id PK
+        int pet_id FK
+        text description
+        date record_date
+    }
+    VACCINATION {
+        int id PK
+        int pet_id FK
+        string name
+        string dose
+        date date_applied
+        date next_dose_due
+    }
+    NOTIFICATION_LOG {
+        int id PK
+        int appointment_id FK
+        string type "reminder|confirmation"
+        string recipient_email
+        enum status "sent|failed"
+        text notes
+        datetime sent_at
+    }
+    USER ||--o{ APPOINTMENT : "crea"
+    PET ||--o{ APPOINTMENT : "tiene"
+    OWNER ||--o{ PET : "posee"
+    PET ||--o{ MEDICAL_RECORD : "tiene"
+    PET ||--o{ VACCINATION : "tiene"
+    APPOINTMENT ||--o{ NOTIFICATION_LOG : "genera"
+```
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## `.gitignore`
+El archivo ya incluye las exclusiones recomendadas (`.env`, `vendor/`, `node_modules/`, `storage/logs/`, etc.).
 
-## Code of Conduct
+---
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+¡Todo listo! 🎉

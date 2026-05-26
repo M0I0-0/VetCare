@@ -35,9 +35,9 @@ return [
         ],
     ],
 
-    'ultramsg' => [
-        'token' => env('ULTRAMSG_TOKEN'),
-        'instance_id' => env('ULTRAMSG_INSTANCE_ID'),
+    'greenapi' => [
+        'token' => env('GREEN_API_TOKEN'),
+        'instance_id' => env('GREEN_API_INSTANCE_ID'),
     ],
 
 ];

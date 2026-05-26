@@ -847,13 +847,13 @@ class VetCareTest extends TestCase
     {
         Mail::fake();
         \Illuminate\Support\Facades\Http::fake([
-            'api.ultramsg.com/*' => \Illuminate\Support\Facades\Http::response(['success' => true], 200)
+            'api.green-api.com/*' => \Illuminate\Support\Facades\Http::response(['success' => true], 200)
         ]);
 
         // Temporarily set env vars in config
         config([
-            'services.ultramsg.token' => 'test_token',
-            'services.ultramsg.instance_id' => 'instance123'
+            'services.greenapi.token' => 'test_token',
+            'services.greenapi.instance_id' => 'instance123'
         ]);
 
         $pet = $this->createPetWithOwner();
@@ -875,13 +875,13 @@ class VetCareTest extends TestCase
             'reason' => 'consulta_general',
         ]);
 
-        // Assert HTTP call to UltraMsg was sent
+        // Assert HTTP call to Green-API was sent
         \Illuminate\Support\Facades\Http::assertSent(function ($request) {
-            return str_contains($request->url(), 'api.ultramsg.com/instance123/messages/chat') &&
-                $request['to'] === '5550987' &&
-                str_contains($request['body'], 'VetCare - Confirmación de Cita') &&
-                str_contains($request['body'], 'Maria Gomez') &&
-                str_contains($request['body'], 'Fido');
+            return str_contains($request->url(), 'api.green-api.com/waInstanceinstance123/sendMessage/test_token') &&
+                $request['chatId'] === '5550987@c.us' &&
+                str_contains($request['message'], 'VetCare - Confirmación de Cita') &&
+                str_contains($request['message'], 'Maria Gomez') &&
+                str_contains($request['message'], 'Fido');
         });
     }
 
@@ -889,12 +889,12 @@ class VetCareTest extends TestCase
     {
         Mail::fake();
         \Illuminate\Support\Facades\Http::fake([
-            'api.ultramsg.com/*' => \Illuminate\Support\Facades\Http::response(['success' => true], 200)
+            'api.green-api.com/*' => \Illuminate\Support\Facades\Http::response(['success' => true], 200)
         ]);
 
         config([
-            'services.ultramsg.token' => 'test_token',
-            'services.ultramsg.instance_id' => 'instance123'
+            'services.greenapi.token' => 'test_token',
+            'services.greenapi.instance_id' => 'instance123'
         ]);
 
         $pet = $this->createPetWithOwner();
@@ -915,11 +915,11 @@ class VetCareTest extends TestCase
 
         // Assert WhatsApp sent
         \Illuminate\Support\Facades\Http::assertSent(function ($request) {
-            return str_contains($request->url(), 'api.ultramsg.com/instance123/messages/chat') &&
-                $request['to'] === '5550987' &&
-                str_contains($request['body'], 'VetCare - Nueva Receta Médica') &&
-                str_contains($request['body'], 'Gripe leve') &&
-                str_contains($request['body'], 'jarabe');
+            return str_contains($request->url(), 'api.green-api.com/waInstanceinstance123/sendMessage/test_token') &&
+                $request['chatId'] === '5550987@c.us' &&
+                str_contains($request['message'], 'VetCare - Nueva Receta Médica') &&
+                str_contains($request['message'], 'Gripe leve') &&
+                str_contains($request['message'], 'jarabe');
         });
 
         // Assert Email sent

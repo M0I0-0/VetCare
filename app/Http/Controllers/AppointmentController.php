@@ -12,6 +12,7 @@ use App\Mail\AppointmentConfirmation;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
+use App\Services\WhatsAppService;
 
 class AppointmentController extends Controller
 {
@@ -78,9 +79,34 @@ class AppointmentController extends Controller
             }
         }
 
+        // Send WhatsApp notification to the pet owner if they have a phone number
+        $ownerPhone = $appointment->pet->owner->phone ?? null;
+        if ($ownerPhone) {
+            try {
+                $ownerName = $appointment->pet->owner->name;
+                $petName = $appointment->pet->name;
+                $date = \Carbon\Carbon::parse($appointment->scheduled_at)->format('d/m/Y');
+                $time = \Carbon\Carbon::parse($appointment->scheduled_at)->format('H:i');
+                $vetName = $appointment->veterinarian->name ?? 'No asignado';
+                $reason = \App\Models\Appointment::$reasons[$appointment->reason] ?? $appointment->reason;
+
+                $messageBody = "🐶 *VetCare - Confirmación de Cita* 🐱\n\n" .
+                    "Hola *{$ownerName}*, te confirmamos la cita para tu mascota *{$petName}*:\n\n" .
+                    "📅 *Fecha y Hora:* {$date} a las {$time} hrs\n" .
+                    "👨‍⚕️ *Veterinario:* {$vetName}\n" .
+                    "🩺 *Motivo:* {$reason}\n\n" .
+                    "_Por favor, llega 10 minutos antes de tu cita. Si tienes alguna duda, escríbenos por este medio._";
+
+                WhatsAppService::sendMessage($ownerPhone, $messageBody);
+            } catch (\Exception $e) {
+                // Catch any exceptions to prevent breaking the flow
+                \Illuminate\Support\Facades\Log::error("Failed to trigger WhatsApp notification for appointment: " . $e->getMessage());
+            }
+        }
+
         return redirect()->route('appointments.show', $appointment)
             ->with('status', 'success')
-            ->with('message', 'Cita registrada exitosamente. Se ha enviado un correo de confirmación al propietario.');
+            ->with('message', 'Cita registrada exitosamente. Se ha enviado un correo de confirmación y un mensaje de WhatsApp al propietario.');
     }
 
     /**

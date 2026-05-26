@@ -6,6 +6,11 @@ use App\Models\Pet;
 use App\Http\Requests\StoreMedicalRecordRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use App\Services\WhatsAppService;
+use App\Mail\ClinicalHistoryMail;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class MedicalRecordController extends Controller
 {
@@ -30,9 +35,12 @@ class MedicalRecordController extends Controller
         // Update the pet's current weight in its profile to reflect the latest checkup
         $pet->update(['weight' => $validated['weight_at_visit']]);
 
+        // Send notifications to the owner
+        $this->sendPrescriptionNotifications($pet, $validated);
+
         return redirect()->route('pets.show', $pet)
             ->with('status', 'success')
-            ->with('message', 'La consulta médica ha sido registrada exitosamente y se actualizó el peso de la mascota.');
+            ->with('message', 'La consulta médica ha sido registrada exitosamente. Se ha enviado el historial clínico por correo y la receta por WhatsApp al propietario.');
     }
 
     /**
@@ -75,8 +83,65 @@ class MedicalRecordController extends Controller
         // Update the pet's current weight
         $pet->update(['weight' => $validated['weight_at_visit']]);
 
+        // Send notifications to the owner
+        $this->sendPrescriptionNotifications($pet, $validated);
+
         return redirect()->route('pets.show', $pet)
             ->with('status', 'success')
-            ->with('message', 'La consulta médica y receta han sido registradas exitosamente y se actualizó el peso de la mascota.');
+            ->with('message', 'La consulta médica y receta han sido registradas exitosamente. Se ha enviado el historial clínico por correo y la receta por WhatsApp al propietario.');
+    }
+
+    /**
+     * Send WhatsApp (UltraMsg) and Email (with clinical history PDF) notifications to the pet owner.
+     *
+     * @param Pet $pet
+     * @param array $recordData
+     * @return void
+     */
+    protected function sendPrescriptionNotifications(Pet $pet, array $recordData): void
+    {
+        // 1. Eager load relations to ensure the PDF is fully populated (including the new medical records)
+        $pet->load(['owner', 'medicalRecords.veterinarian', 'vaccinations']);
+
+        $owner = $pet->owner;
+        if (!$owner) {
+            return;
+        }
+
+        // --- WhatsApp Notification (UltraMsg) ---
+        if (!empty($owner->phone)) {
+            try {
+                $ownerName = $owner->name;
+                $petName = $pet->name;
+                $weight = $recordData['weight_at_visit'];
+                $diagnosis = $recordData['diagnosis'];
+                $treatment = $recordData['treatment'];
+
+                $messageBody = "📋 *VetCare - Nueva Receta Médica* 🩺\n\n" .
+                    "Hola *{$ownerName}*, te enviamos la receta del chequeo médico de *{$petName}*:\n\n" .
+                    "⚖️ *Peso registrado:* {$weight} kg\n" .
+                    "🩺 *Diagnóstico:* {$diagnosis}\n" .
+                    "💊 *Tratamiento / Receta:* \n{$treatment}\n\n" .
+                    "_Le deseamos una pronta recuperación a su mascota. También hemos enviado el historial clínico completo en PDF a su correo electrónico._";
+
+                WhatsAppService::sendMessage($owner->phone, $messageBody);
+            } catch (\Exception $e) {
+                Log::error("Failed to send WhatsApp prescription notification: " . $e->getMessage());
+            }
+        }
+
+        // --- Email Notification with clinical history PDF ---
+        if (!empty($owner->email)) {
+            try {
+                // Generate PDF in-memory using Barryvdh\DomPDF\Facade\Pdf
+                $pdf = Pdf::loadView('pets.pdf', compact('pet'));
+                $pdfData = $pdf->output();
+
+                // Send the ClinicalHistoryMail with PDF attachment
+                Mail::to($owner->email)->send(new ClinicalHistoryMail($pet, $pdfData));
+            } catch (\Exception $e) {
+                Log::error("Failed to send clinical history email notification: " . $e->getMessage());
+            }
+        }
     }
 }

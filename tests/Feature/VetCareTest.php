@@ -842,4 +842,90 @@ class VetCareTest extends TestCase
         $responseDelete->assertRedirect(route('admin.users.index'));
         $this->assertDatabaseMissing('users', ['id' => $newUser->id]);
     }
+
+    public function test_appointment_creation_sends_whatsapp_notification(): void
+    {
+        Mail::fake();
+        \Illuminate\Support\Facades\Http::fake([
+            'api.ultramsg.com/*' => \Illuminate\Support\Facades\Http::response(['success' => true], 200)
+        ]);
+
+        // Temporarily set env vars in config
+        config([
+            'services.ultramsg.token' => 'test_token',
+            'services.ultramsg.instance_id' => 'instance123'
+        ]);
+
+        $pet = $this->createPetWithOwner();
+
+        $appointmentData = [
+            'pet_id'       => $pet->id,
+            'user_id'      => $this->vet->id,
+            'scheduled_at' => now()->addDays(5)->format('Y-m-d H:i:s'),
+            'reason'       => 'consulta_general',
+            'notes'        => 'Primera visita del año.',
+            'status'       => 'pendiente',
+        ];
+
+        $response = $this->actingAs($this->vet)->post(route('appointments.store'), $appointmentData);
+
+        // Assert database insertion
+        $this->assertDatabaseHas('appointments', [
+            'pet_id' => $pet->id,
+            'reason' => 'consulta_general',
+        ]);
+
+        // Assert HTTP call to UltraMsg was sent
+        \Illuminate\Support\Facades\Http::assertSent(function ($request) {
+            return str_contains($request->url(), 'api.ultramsg.com/instance123/messages/chat') &&
+                $request['to'] === '5550987' &&
+                str_contains($request['body'], 'VetCare - Confirmación de Cita') &&
+                str_contains($request['body'], 'Maria Gomez') &&
+                str_contains($request['body'], 'Fido');
+        });
+    }
+
+    public function test_prescription_creation_sends_whatsapp_and_clinical_history_email(): void
+    {
+        Mail::fake();
+        \Illuminate\Support\Facades\Http::fake([
+            'api.ultramsg.com/*' => \Illuminate\Support\Facades\Http::response(['success' => true], 200)
+        ]);
+
+        config([
+            'services.ultramsg.token' => 'test_token',
+            'services.ultramsg.instance_id' => 'instance123'
+        ]);
+
+        $pet = $this->createPetWithOwner();
+
+        $recordData = [
+            'weight_at_visit' => 9.20,
+            'diagnosis' => 'Gripe leve por cambio de clima estacional.',
+            'treatment' => 'Administrar 5ml de jarabe pediátrico cada 12 horas por 5 días.',
+        ];
+
+        $response = $this->actingAs($this->vet)->post(route('pets.medical-records.store', $pet), $recordData);
+
+        // Assert record is created
+        $this->assertDatabaseHas('medical_records', [
+            'pet_id' => $pet->id,
+            'weight_at_visit' => 9.20,
+        ]);
+
+        // Assert WhatsApp sent
+        \Illuminate\Support\Facades\Http::assertSent(function ($request) {
+            return str_contains($request->url(), 'api.ultramsg.com/instance123/messages/chat') &&
+                $request['to'] === '5550987' &&
+                str_contains($request['body'], 'VetCare - Nueva Receta Médica') &&
+                str_contains($request['body'], 'Gripe leve') &&
+                str_contains($request['body'], 'jarabe');
+        });
+
+        // Assert Email sent
+        Mail::assertSent(\App\Mail\ClinicalHistoryMail::class, function ($mail) use ($pet) {
+            return $mail->hasTo('maria@example.com') &&
+                $mail->pet->id === $pet->id;
+        });
+    }
 }

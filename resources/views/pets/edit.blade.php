@@ -6,7 +6,10 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
             </a>
-            <span>📝 {{ __('Editar Mascota') }}: <span class="text-purple-700">{{ $pet->name }}</span></span>
+            <svg class="h-6 w-6 text-purple-650 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            <span>{{ __('Editar Mascota') }}: <span class="text-purple-700">{{ $pet->name }}</span></span>
         </h2>
     </x-slot>
 
@@ -61,11 +64,11 @@
                             <label for="species" class="block text-xs sm:text-sm font-extrabold text-purple-950">Especie</label>
                             <select name="species" id="species" class="w-full px-4 py-3 rounded-xl border @error('species') border-rose-400 focus:ring-rose-500/20 focus:border-rose-500 @else border-[#e2d8f7] focus:ring-purple-500/20 focus:border-purple-500 @enderror bg-white text-purple-950 transition-all focus:outline-none focus:ring-2 font-semibold" required>
                                 <option value="" disabled>Selecciona especie...</option>
-                                <option value="perro" {{ old('species', $pet->species) == 'perro' ? 'selected' : '' }}>Perro 🐶</option>
-                                <option value="gato" {{ old('species', $pet->species) == 'gato' ? 'selected' : '' }}>Gato 🐱</option>
-                                <option value="ave" {{ old('species', $pet->species) == 'ave' ? 'selected' : '' }}>Ave 🦜</option>
-                                <option value="conejo" {{ old('species', $pet->species) == 'conejo' ? 'selected' : '' }}>Conejo 🐰</option>
-                                <option value="otro" {{ old('species', $pet->species) == 'otro' ? 'selected' : '' }}>Otro 🐾</option>
+                                <option value="perro" {{ old('species', $pet->species) == 'perro' ? 'selected' : '' }}>Perro</option>
+                                <option value="gato" {{ old('species', $pet->species) == 'gato' ? 'selected' : '' }}>Gato</option>
+                                <option value="ave" {{ old('species', $pet->species) == 'ave' ? 'selected' : '' }}>Ave</option>
+                                <option value="conejo" {{ old('species', $pet->species) == 'conejo' ? 'selected' : '' }}>Conejo</option>
+                                <option value="otro" {{ old('species', $pet->species) == 'otro' ? 'selected' : '' }}>Otro</option>
                             </select>
                             @error('species')
                                 <p class="text-xs text-rose-600 font-extrabold mt-1 flex items-center gap-1">
@@ -127,8 +130,8 @@
                                     <span class="absolute -top-2.5 -right-2.5 px-2 py-0.5 rounded-full text-[3xs] font-black bg-purple-600 text-white shadow-sm border border-[#e2d8f7]">Actual</span>
                                 </div>
                             @else
-                                <div class="h-20 w-20 rounded-2xl bg-purple-50 text-purple-500 border border-dashed border-[#e2d8f7] flex items-center justify-center font-bold text-2xl shadow-3xs self-center">
-                                    🐾
+                                <div class="h-20 w-20 rounded-2xl overflow-hidden bg-purple-50 border border-[#e2d8f7] shadow-3xs self-center shrink-0">
+                                    <img src="{{ asset('images/logos/logo_vetcare.jpg') }}" class="h-full w-full object-cover opacity-60" alt="Logo">
                                 </div>
                             @endif
 

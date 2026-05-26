@@ -121,14 +121,14 @@
 <body>
     <div class="wrapper">
         <div class="header">
-            <div class="icon">🐾</div>
+            <div class="icon-circle" style="display:inline-block; border: 3px solid #ffffff; border-radius: 50%; width: 64px; height: 64px; line-height: 58px; font-size: 32px; font-weight: 800; color: #ffffff; margin-bottom: 12px;">V</div>
             <h1>VetCare</h1>
             <p>Confirmación de Cita Veterinaria</p>
         </div>
 
         <div class="body">
             <p class="greeting">
-                ✅ ¡Cita confirmada, {{ $appointment->pet->owner->name ?? 'Estimado propietario' }}!
+                ¡Cita confirmada, {{ $appointment->pet->owner->name ?? 'Estimado propietario' }}!
             </p>
             <p class="intro">
                 Nos complace informarle que su cita veterinaria para <strong>{{ $appointment->pet->name }}</strong>
@@ -136,7 +136,7 @@
             </p>
 
             <div class="card">
-                <div class="card-title">📋 Detalles de la Cita</div>
+                <div class="card-title">Detalles de la Cita</div>
                 <div class="detail-row">
                     <span class="detail-label">Mascota</span>
                     <span class="detail-value">{{ $appointment->pet->name }} ({{ ucfirst($appointment->pet->species) }})</span>
@@ -172,7 +172,7 @@
 
             @if($appointment->notes)
             <div class="note-box">
-                <strong>📝 Notas adicionales:</strong><br>
+                <strong>Notas adicionales:</strong><br>
                 {{ $appointment->notes }}
             </div>
             @endif
@@ -182,7 +182,7 @@
                 Si necesita cancelar o modificar su cita, por favor contáctenos con antelación suficiente.
             </p>
             <p class="footer-text">
-                ¡Gracias por confiar en <strong style="color:#059669">VetCare</strong> para el cuidado de su mascota! 🐾
+                ¡Gracias por confiar en <strong style="color:#059669">VetCare</strong> para el cuidado de su mascota!
             </p>
         </div>
 

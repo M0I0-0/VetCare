@@ -682,4 +682,164 @@ class VetCareTest extends TestCase
         $this->artisan('schedule:list')
              ->assertExitCode(0);
     }
+
+    public function test_recep_cannot_edit_or_delete_owners(): void
+    {
+        $owner = Owner::create([
+            'name' => 'Test Owner',
+            'email' => 'testowner@example.com',
+            'phone' => '123456',
+            'address' => 'Test Address',
+        ]);
+
+        $responseEdit = $this->actingAs($this->recep)->get(route('owners.edit', $owner));
+        $responseEdit->assertStatus(403);
+
+        $responseUpdate = $this->actingAs($this->recep)->put(route('owners.update', $owner), [
+            'name' => 'Updated Owner',
+            'email' => 'testowner@example.com',
+        ]);
+        $responseUpdate->assertStatus(403);
+
+        $responseDelete = $this->actingAs($this->recep)->delete(route('owners.destroy', $owner));
+        $responseDelete->assertStatus(403);
+    }
+
+    public function test_recep_cannot_edit_or_delete_pets(): void
+    {
+        $pet = $this->createPetWithOwner();
+
+        $responseEdit = $this->actingAs($this->recep)->get(route('pets.edit', $pet));
+        $responseEdit->assertStatus(403);
+
+        $responseUpdate = $this->actingAs($this->recep)->put(route('pets.update', $pet), [
+            'name' => 'Updated Pet',
+            'species' => 'perro',
+            'breed' => 'Pug',
+            'birthdate' => '2023-01-01',
+            'weight' => 8.50,
+        ]);
+        $responseUpdate->assertStatus(403);
+
+        $responseDelete = $this->actingAs($this->recep)->delete(route('pets.destroy', $pet));
+        $responseDelete->assertStatus(403);
+    }
+
+    public function test_recep_cannot_create_or_edit_or_delete_appointments(): void
+    {
+        $pet = $this->createPetWithOwner();
+
+        $responseCreate = $this->actingAs($this->recep)->get(route('appointments.create'));
+        $responseCreate->assertStatus(403);
+
+        $responseStore = $this->actingAs($this->recep)->post(route('appointments.store'), [
+            'pet_id' => $pet->id,
+            'user_id' => $this->vet->id,
+            'scheduled_at' => now()->addDays(5)->format('Y-m-d H:i:s'),
+            'reason' => 'consulta_general',
+        ]);
+        $responseStore->assertStatus(403);
+    }
+
+    public function test_vet_cannot_create_or_edit_or_delete_owners(): void
+    {
+        $ownerData = [
+            'name' => 'Another Owner',
+            'email' => 'anotherowner@example.com',
+            'phone' => '123456',
+            'address' => 'Test Address',
+        ];
+
+        $responseCreate = $this->actingAs($this->vet)->get(route('owners.create'));
+        $responseCreate->assertStatus(403);
+
+        $responseStore = $this->actingAs($this->vet)->post(route('owners.store'), $ownerData);
+        $responseStore->assertStatus(403);
+    }
+
+    public function test_vet_cannot_create_or_delete_pets(): void
+    {
+        $owner = Owner::create([
+            'name' => 'Carlos Lopez',
+            'email' => 'carlos@test.com',
+            'phone' => '555-9999',
+            'address' => 'Calle Test 123',
+        ]);
+
+        $petData = [
+            'owner_id' => $owner->id,
+            'name' => 'Fido Junior',
+            'species' => 'perro',
+            'breed' => 'Pug',
+            'birthdate' => '2023-01-01',
+            'weight' => 8.50,
+        ];
+
+        $responseCreate = $this->actingAs($this->vet)->get(route('pets.create'));
+        $responseCreate->assertStatus(403);
+
+        $responseStore = $this->actingAs($this->vet)->post(route('pets.store'), $petData);
+        $responseStore->assertStatus(403);
+
+        $pet = $this->createPetWithOwner();
+        $responseDelete = $this->actingAs($this->vet)->delete(route('pets.destroy', $pet));
+        $responseDelete->assertStatus(403);
+    }
+
+    public function test_non_admin_cannot_access_user_management(): void
+    {
+        $responseRecepIndex = $this->actingAs($this->recep)->get(route('admin.users.index'));
+        $responseRecepIndex->assertStatus(403);
+
+        $responseVetIndex = $this->actingAs($this->vet)->get(route('admin.users.index'));
+        $responseVetIndex->assertStatus(403);
+    }
+
+    public function test_admin_can_perform_full_user_management_crud(): void
+    {
+        // 1. List
+        $responseIndex = $this->actingAs($this->admin)->get(route('admin.users.index'));
+        $responseIndex->assertStatus(200);
+        $responseIndex->assertViewIs('admin.users.index');
+
+        // 2. Create Form
+        $responseCreate = $this->actingAs($this->admin)->get(route('admin.users.create'));
+        $responseCreate->assertStatus(200);
+        $responseCreate->assertViewIs('admin.users.create');
+
+        // 3. Store
+        $userData = [
+            'name' => 'New Staff Member',
+            'email' => 'newstaff@vetcare.com',
+            'role' => 'recepcionista',
+            'password' => 'newpassword123',
+            'password_confirmation' => 'newpassword123',
+        ];
+        $responseStore = $this->actingAs($this->admin)->post(route('admin.users.store'), $userData);
+        $responseStore->assertRedirect(route('admin.users.index'));
+        $this->assertDatabaseHas('users', ['email' => 'newstaff@vetcare.com', 'role' => 'recepcionista']);
+
+        // Get newly created user
+        $newUser = User::where('email', 'newstaff@vetcare.com')->first();
+
+        // 4. Edit Form
+        $responseEdit = $this->actingAs($this->admin)->get(route('admin.users.edit', $newUser));
+        $responseEdit->assertStatus(200);
+        $responseEdit->assertViewIs('admin.users.edit');
+
+        // 5. Update
+        $updateData = [
+            'name' => 'Updated Staff Member',
+            'email' => 'newstaff@vetcare.com',
+            'role' => 'veterinario',
+        ];
+        $responseUpdate = $this->actingAs($this->admin)->put(route('admin.users.update', $newUser), $updateData);
+        $responseUpdate->assertRedirect(route('admin.users.index'));
+        $this->assertDatabaseHas('users', ['id' => $newUser->id, 'name' => 'Updated Staff Member', 'role' => 'veterinario']);
+
+        // 6. Delete
+        $responseDelete = $this->actingAs($this->admin)->delete(route('admin.users.destroy', $newUser));
+        $responseDelete->assertRedirect(route('admin.users.index'));
+        $this->assertDatabaseMissing('users', ['id' => $newUser->id]);
+    }
 }

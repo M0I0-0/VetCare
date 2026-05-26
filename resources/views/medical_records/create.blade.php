@@ -15,24 +15,26 @@
             <!-- Patient Mini Summary Card -->
             <div class="bg-gradient-to-tr from-purple-50 via-indigo-50/50 to-purple-100/40 text-purple-950 rounded-[2rem] p-6 border border-[#e2d8f7] shadow-3xs mb-6 flex items-center justify-between">
                 <div class="flex items-center gap-4">
-                    <div class="w-16 h-16 rounded-2xl bg-white border border-[#e2d8f7] flex items-center justify-center text-3xl shadow-3xs font-semibold">
+                    <div class="w-16 h-16 rounded-2xl bg-white border border-[#e2d8f7] overflow-hidden flex items-center justify-center shadow-3xs shrink-0">
                         @if($pet->photo)
-                            <img src="{{ asset('storage/' . $pet->photo) }}" alt="{{ $pet->name }}" class="w-full h-full object-cover rounded-2xl">
+                            <img src="{{ asset('storage/' . $pet->photo) }}" alt="{{ $pet->name }}" class="w-full h-full object-cover">
                         @else
-                            @switch(strtolower($pet->species))
-                                @case('perro') 🐶 @break
-                                @case('gato') 🐱 @break
-                                @case('conejo') 🐰 @break
-                                @case('ave') 🦜 @break
-                                @default 🐾
-                            @endswitch
+                            <img src="{{ asset('images/logos/logo_vetcare.jpg') }}" alt="Logo Fallback" class="w-full h-full object-cover opacity-80">
                         @endif
                     </div>
                     <div>
                         <span class="text-xs text-purple-700/75 font-extrabold uppercase tracking-wider block">Paciente en Consulta</span>
                         <h3 class="text-xl font-extrabold text-purple-950 mt-0.5">{{ $pet->name }}</h3>
-                        <p class="text-xs text-gray-500 mt-1 font-semibold">
-                            {{ ucfirst($pet->species) }} ({{ $pet->breed }}) &bull; Dueño: <span class="font-extrabold text-purple-700">👤 {{ $pet->owner->name }}</span>
+                        <p class="text-xs text-gray-500 mt-1 font-semibold flex items-center gap-1.5 flex-wrap">
+                            <span>{{ ucfirst($pet->species) }} ({{ $pet->breed }})</span>
+                            <span class="text-purple-300">&bull;</span>
+                            <span>Dueño:</span>
+                            <span class="font-extrabold text-purple-700 inline-flex items-center gap-1">
+                                <svg class="h-3.5 w-3.5 text-purple-500 shrink-0 stroke-[2.2]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
+                                {{ $pet->owner->name }}
+                            </span>
                         </p>
                     </div>
                 </div>
@@ -99,7 +101,7 @@
                             Cancelar
                         </a>
                         <button type="submit" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-500 via-indigo-500 to-purple-600 hover:from-purple-600 hover:to-indigo-600 text-white font-bold text-sm rounded-2xl hover:shadow-lg hover:shadow-purple-500/20 transform hover:-translate-y-0.5 transition-all duration-150 shadow-sm">
-                            <svg class="w-4.5 h-4.5 me-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <svg class="w-4 h-4 me-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
                             Guardar Consulta

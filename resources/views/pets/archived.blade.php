@@ -7,8 +7,10 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
                 </a>
-                📂
-                {{ __('Papelera de Mascotas (Archivadas)') }}
+                <svg class="h-6 w-6 text-purple-650 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                <span>{{ __('Papelera de Mascotas (Archivadas)') }}</span>
             </h2>
         </div>
     </x-slot>
@@ -36,7 +38,9 @@
                 @if($pets->isEmpty())
                     <div class="text-center py-16">
                         <div class="h-16 w-16 rounded-full bg-purple-50 flex items-center justify-center text-purple-500 mx-auto mb-4 border border-[#e2d8f7] shadow-3xs">
-                            📂
+                            <svg class="h-8 w-8 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
                         </div>
                         <h4 class="font-extrabold text-purple-950">La papelera está vacía</h4>
                         <p class="text-xs text-gray-500 mt-1 font-semibold">No hay mascotas archivadas en el sistema.</p>
@@ -61,8 +65,8 @@
                                             @if($pet->photo)
                                                 <img src="{{ asset('storage/' . $pet->photo) }}" class="h-10 w-10 rounded-xl object-cover border border-[#e2d8f7] shadow-sm grayscale" alt="{{ $pet->name }}">
                                             @else
-                                                <div class="h-10 w-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold border border-[#e2d8f7]">
-                                                    🐾
+                                                <div class="h-10 w-10 rounded-xl overflow-hidden bg-purple-50 border border-[#e2d8f7] shadow-3xs flex items-center justify-center shrink-0">
+                                                    <img src="{{ asset('images/logos/logo_vetcare.jpg') }}" class="h-full w-full object-cover opacity-60" alt="Logo">
                                                 </div>
                                             @endif
                                         </td>
@@ -74,7 +78,12 @@
                                                 <span class="inline-flex items-center px-2 py-0.5 rounded-full text-2xs font-extrabold bg-purple-50 text-purple-700 border border-[#e2d8f7] capitalize self-start">
                                                     {{ $pet->species }}
                                                 </span>
-                                                <span class="text-xs text-gray-500 mt-1 font-semibold">🧬 {{ $pet->breed }}</span>
+                                                <span class="text-xs text-gray-500 mt-1 font-semibold flex items-center gap-1">
+                                                    <svg class="h-3.5 w-3.5 text-purple-400 shrink-0 stroke-[2.2]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M6 20h12a2 2 0 002-2V9a2 2 0 00-2-2h-1M9 21h6" />
+                                                    </svg>
+                                                    {{ $pet->breed }}
+                                                </span>
                                             </div>
                                         </td>
                                         <td class="py-4 px-6 font-semibold">
@@ -86,8 +95,18 @@
                                         </td>
                                         <td class="py-4 px-6 whitespace-nowrap">
                                             <div class="flex flex-col text-xs">
-                                                <span class="text-purple-950 font-bold">⚖️ {{ $pet->weight }} kg</span>
-                                                <span class="text-gray-500 font-semibold text-2xs mt-1">🎂 {{ \Carbon\Carbon::parse($pet->birthdate)->age }} años de edad</span>
+                                                <span class="text-purple-950 font-bold flex items-center gap-1">
+                                                    <svg class="h-3.5 w-3.5 text-purple-550 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+                                                    </svg>
+                                                    {{ $pet->weight }} kg
+                                                </span>
+                                                <span class="text-gray-500 font-semibold text-2xs mt-1 flex items-center gap-1">
+                                                    <svg class="h-3.5 w-3.5 text-purple-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                    </svg>
+                                                    {{ \Carbon\Carbon::parse($pet->birthdate)->age }} años de edad
+                                                </span>
                                             </div>
                                         </td>
                                         <td class="py-4 px-6 text-right space-x-2 whitespace-nowrap">

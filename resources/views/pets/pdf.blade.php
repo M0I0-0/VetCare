@@ -213,7 +213,7 @@
     <table class="clinic-header" style="width: 100%;">
         <tr>
             <td style="vertical-align: middle;">
-                <h1 class="clinic-title">🐾 VetCare</h1>
+                <h1 class="clinic-title">VetCare</h1>
                 <p class="clinic-subtitle">Sistema de Gestión Veterinaria</p>
             </td>
             <td style="vertical-align: middle; text-align: right;">
@@ -238,11 +238,11 @@
                         <span class="info-label">Especie:</span>
                         <span class="info-value">
                             @switch(strtolower($pet->species))
-                                @case('perro') Perro 🐶 @break
-                                @case('gato') Gato 🐱 @break
-                                @case('conejo') Conejo 🐰 @break
-                                @case('ave') Ave 🦜 @break
-                                @default {{ ucfirst($pet->species) }} 🐾
+                                @case('perro') Perro @break
+                                @case('gato') Gato @break
+                                @case('conejo') Conejo @break
+                                @case('ave') Ave @break
+                                @default {{ ucfirst($pet->species) }}
                             @endswitch
                         </span>
                     </div>
@@ -267,7 +267,7 @@
                     <div class="card-title">Propietario / Cliente</div>
                     <div class="info-row">
                         <span class="info-label">Nombre:</span>
-                        <span class="info-value" style="font-weight: bold;">👤 {{ $pet->owner->name }}</span>
+                        <span class="info-value" style="font-weight: bold;">{{ $pet->owner->name }}</span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">Email:</span>
@@ -275,11 +275,11 @@
                     </div>
                     <div class="info-row">
                         <span class="info-label">Teléfono:</span>
-                        <span class="info-value">📞 {{ $pet->owner->phone }}</span>
+                        <span class="info-value">{{ $pet->owner->phone }}</span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">Dirección:</span>
-                        <span class="info-value">🏠 {{ $pet->owner->address }}</span>
+                        <span class="info-value">{{ $pet->owner->address }}</span>
                     </div>
                 </div>
             </td>
@@ -301,11 +301,11 @@
             <tbody>
                 @foreach($pet->vaccinations as $vaccine)
                     <tr>
-                        <td>📅 {{ \Carbon\Carbon::parse($vaccine->date_applied)->format('d/m/Y') }}</td>
-                        <td style="font-weight: bold; color: #115e59;">💉 {{ $vaccine->name }}</td>
+                        <td>{{ \Carbon\Carbon::parse($vaccine->date_applied)->format('d/m/Y') }}</td>
+                        <td style="font-weight: bold; color: #115e59;">{{ $vaccine->name }}</td>
                         <td>{{ $vaccine->dose }}</td>
                         <td style="color: {{ $vaccine->next_dose_due ? '#b45309' : '#6b7280' }}; font-weight: {{ $vaccine->next_dose_due ? 'bold' : 'normal' }};">
-                            {{ $vaccine->next_dose_due ? '🔔 ' . \Carbon\Carbon::parse($vaccine->next_dose_due)->format('d/m/Y') : 'N/A' }}
+                            {{ $vaccine->next_dose_due ? \Carbon\Carbon::parse($vaccine->next_dose_due)->format('d/m/Y') : 'N/A' }}
                         </td>
                     </tr>
                 @endforeach
@@ -322,10 +322,10 @@
             <div class="record-card">
                 <table class="record-meta-table">
                     <tr>
-                        <td class="record-meta-left">🩺 Consulta del {{ \Carbon\Carbon::parse($record->created_at)->format('d/m/Y H:i') }}</td>
+                        <td class="record-meta-left">Consulta del {{ \Carbon\Carbon::parse($record->created_at)->format('d/m/Y H:i') }}</td>
                         <td class="record-meta-right">
                             Peso: <strong>{{ number_format($record->weight_at_visit, 2) }} kg</strong> &bull;
-                            Vet: <strong>👨‍⚕️ {{ $record->veterinarian->name }}</strong>
+                            Vet: <strong>{{ $record->veterinarian->name }}</strong>
                         </td>
                     </tr>
                 </table>

@@ -28,7 +28,7 @@
                     <div class="flex gap-4">
                         <div class="bg-white/10 backdrop-blur-md px-6 py-3 rounded-2xl border border-white/20 shadow-2xs text-center">
                             <span class="text-xs text-purple-100 block uppercase font-bold tracking-wider">Usuarios Activos</span>
-                            <span class="text-2xl font-black mt-1 block">3</span>
+                            <span class="text-2xl font-black mt-1 block">{{ \App\Models\User::count() }}</span>
                         </div>
                         <div class="bg-white/10 backdrop-blur-md px-6 py-3 rounded-2xl border border-white/20 shadow-2xs text-center">
                             <span class="text-xs text-purple-100 block uppercase font-bold tracking-wider">Estado Sistema</span>
@@ -108,7 +108,7 @@
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     
-                    <a href="#" class="group p-5 rounded-2xl border border-purple-100/50 hover:border-indigo-300 hover:bg-indigo-50/40 transition-all duration-200 shadow-3xs">
+                    <a href="{{ route('admin.users.index') }}" class="group p-5 rounded-2xl border border-purple-100/50 hover:border-indigo-300 hover:bg-indigo-50/40 transition-all duration-200 shadow-3xs">
                         <div class="h-10 w-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />

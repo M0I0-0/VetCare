@@ -6,7 +6,10 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
             </a>
-            <span>🐾 {{ __('Registrar Nueva Mascota') }}</span>
+            <svg class="h-6 w-6 text-purple-650 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+            <span>{{ __('Registrar Nueva Mascota') }}</span>
         </h2>
     </x-slot>
 
@@ -60,11 +63,11 @@
                             <label for="species" class="block text-xs sm:text-sm font-extrabold text-purple-950">Especie</label>
                             <select name="species" id="species" class="w-full px-4 py-3 rounded-xl border @error('species') border-rose-400 focus:ring-rose-500/20 focus:border-rose-500 @else border-[#e2d8f7] focus:ring-purple-500/20 focus:border-purple-500 @enderror bg-white text-purple-950 transition-all focus:outline-none focus:ring-2 font-semibold" required>
                                 <option value="" disabled selected>Selecciona especie...</option>
-                                <option value="perro" {{ old('species') == 'perro' ? 'selected' : '' }}>Perro 🐶</option>
-                                <option value="gato" {{ old('species') == 'gato' ? 'selected' : '' }}>Gato 🐱</option>
-                                <option value="ave" {{ old('species') == 'ave' ? 'selected' : '' }}>Ave 🦜</option>
-                                <option value="conejo" {{ old('species') == 'conejo' ? 'selected' : '' }}>Conejo 🐰</option>
-                                <option value="otro" {{ old('species') == 'otro' ? 'selected' : '' }}>Otro 🐾</option>
+                                <option value="perro" {{ old('species') == 'perro' ? 'selected' : '' }}>Perro</option>
+                                <option value="gato" {{ old('species') == 'gato' ? 'selected' : '' }}>Gato</option>
+                                <option value="ave" {{ old('species') == 'ave' ? 'selected' : '' }}>Ave</option>
+                                <option value="conejo" {{ old('species') == 'conejo' ? 'selected' : '' }}>Conejo</option>
+                                <option value="otro" {{ old('species') == 'otro' ? 'selected' : '' }}>Otro</option>
                             </select>
                             @error('species')
                                 <p class="text-xs text-rose-600 font-extrabold mt-1 flex items-center gap-1">

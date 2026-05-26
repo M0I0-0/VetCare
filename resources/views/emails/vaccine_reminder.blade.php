@@ -119,7 +119,7 @@
 <body>
     <div class="wrapper">
         <div class="header">
-            <div class="icon">💉</div>
+            <div class="icon-circle" style="display:inline-block; border: 3px solid #ffffff; border-radius: 50%; width: 64px; height: 64px; line-height: 58px; font-size: 32px; font-weight: 800; color: #ffffff; margin-bottom: 12px;">V</div>
             <h1>VetCare</h1>
             <p>Recordatorio del Programa de Vacunación</p>
         </div>
@@ -135,7 +135,7 @@
 
             <!-- Pet profile -->
             <div class="pet-card">
-                <div class="pet-avatar">🐾</div>
+                <div class="pet-avatar" style="color: #ffffff; font-weight: 800; line-height: 56px; text-align: center;">{{ substr($pet->name, 0, 1) }}</div>
                 <div class="pet-info">
                     <div class="pet-name">{{ $pet->name }}</div>
                     <div class="pet-meta">
@@ -148,12 +148,12 @@
             @if($overdueVaccinations->count() > 0)
                 <!-- Overdue vaccines -->
                 <div class="alert-box">
-                    <div class="alert-title">⚠️ ¡Atención! Vacunas Vencidas</div>
+                    <div class="alert-title">¡Atención! Vacunas Vencidas</div>
                     <p>Las siguientes vacunas ya superaron su fecha de refuerzo. Le recomendamos programar una cita a la brevedad posible.</p>
                 </div>
 
                 <div class="section-block">
-                    <div class="section-title overdue">🔴 Vacunas Vencidas ({{ $overdueVaccinations->count() }})</div>
+                    <div class="section-title overdue">Vacunas Vencidas ({{ $overdueVaccinations->count() }})</div>
                     @foreach($overdueVaccinations as $vaccine)
                         @php
                             $daysPast = \Carbon\Carbon::parse($vaccine->next_dose_due)->diffInDays(now());
@@ -177,7 +177,7 @@
             @if($upcomingVaccinations->count() > 0)
                 <!-- Upcoming vaccines -->
                 <div class="section-block">
-                    <div class="section-title upcoming">🟡 Refuerzos Próximos (en 7 días)</div>
+                    <div class="section-title upcoming">Refuerzos Próximos (en 7 días)</div>
                     @foreach($upcomingVaccinations as $vaccine)
                         @php
                             $daysLeft = now()->diffInDays(\Carbon\Carbon::parse($vaccine->next_dose_due), false);
@@ -200,7 +200,7 @@
 
             <div class="cta-box">
                 <a href="#" class="cta-btn">
-                    📅 Programar Cita de Vacunación
+                    Programar Cita de Vacunación
                 </a>
             </div>
 
@@ -209,7 +209,7 @@
                 con nuestro personal para mantener el historial actualizado.
             </p>
             <p class="footer-text">
-                ¡Gracias por confiar en <strong style="color:#7c3aed">VetCare</strong> para el cuidado de <strong>{{ $pet->name }}</strong>! 🐾
+                ¡Gracias por confiar en <strong style="color:#7c3aed">VetCare</strong> para el cuidado de <strong>{{ $pet->name }}</strong>!
             </p>
         </div>
 

@@ -140,7 +140,7 @@
 <body>
     <div class="wrapper">
         <div class="header">
-            <div class="icon">🔔</div>
+            <div class="icon-circle" style="display:inline-block; border: 3px solid #ffffff; border-radius: 50%; width: 64px; height: 64px; line-height: 58px; font-size: 32px; font-weight: 800; color: #ffffff; margin-bottom: 12px;">V</div>
             <h1>VetCare</h1>
             <p>Recordatorio de Cita Veterinaria</p>
         </div>
@@ -160,7 +160,7 @@
             </div>
 
             <div class="card">
-                <div class="card-title">📋 Detalles de la Cita</div>
+                <div class="card-title">Detalles de la Cita</div>
                 <div class="detail-row">
                     <span class="detail-label">Mascota</span>
                     <span class="detail-value">{{ $appointment->pet->name }} ({{ ucfirst($appointment->pet->species) }})</span>
@@ -186,7 +186,7 @@
             </div>
 
             <div class="tips-box">
-                <div class="tip-title">💡 Recomendaciones para la cita</div>
+                <div class="tip-title">Recomendaciones para la cita</div>
                 <ul>
                     <li>Lleve el historial médico y cartilla de vacunación de su mascota.</li>
                     <li>Si su mascota requiere ayuno, asegúrese de seguir las instrucciones previas.</li>
@@ -197,7 +197,7 @@
 
             <p class="footer-text">
                 Si necesita cancelar o reprogramar su cita, por favor contáctenos a la brevedad posible.
-                ¡Gracias por confiar en <strong style="color:#4f46e5">VetCare</strong>! 🐾
+                ¡Gracias por confiar en <strong style="color:#4f46e5">VetCare</strong>!
             </p>
         </div>
 

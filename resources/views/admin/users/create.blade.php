@@ -17,7 +17,7 @@
             <div class="bg-white rounded-[2.2rem] shadow-3xs border border-[#e2d8f7] overflow-hidden">
                 <div class="p-6 border-b border-[#e2d8f7] bg-purple-50/10 flex items-center gap-3">
                     <div class="h-10 w-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center shadow-3xs">
-                        <svg class="h-5.5 w-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                         </svg>
                     </div>

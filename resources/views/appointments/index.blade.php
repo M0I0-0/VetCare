@@ -106,7 +106,7 @@
                                             </div>
                                         <td class="py-4 px-6">
                                             <a href="{{ route('pets.show', $appt->pet) }}" class="font-extrabold text-purple-600 hover:text-purple-800 hover:underline flex items-center gap-1.5 text-sm">
-                                                <div class="h-5.5 w-5.5 rounded-full overflow-hidden bg-purple-50 border border-[#e2d8f7] shrink-0">
+                                                <div class="h-8 w-8 rounded-full overflow-hidden bg-purple-50 border border-[#e2d8f7] shrink-0">
                                                     @if($appt->pet->photo)
                                                         <img src="{{ asset('storage/' . $appt->pet->photo) }}" class="h-full w-full object-cover" alt="Foto">
                                                     @else

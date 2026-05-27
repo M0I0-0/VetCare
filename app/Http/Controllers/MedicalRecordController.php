@@ -129,7 +129,7 @@ class MedicalRecordController extends Controller
                     "💊 *Tratamiento / Receta:* \n{$treatment}\n\n";
 
                 if (!empty($friendlyExplanation)) {
-                    $messageBody .= "✨ *Explicación amigable (IA):* \n{$friendlyExplanation}\n\n";
+                    $messageBody .= "✨ *Explicación amigable:* \n{$friendlyExplanation}\n\n";
                 }
 
                 $messageBody .= "_Le deseamos una pronta recuperación a su mascota. También hemos enviado el historial clínico completo en PDF a su correo electrónico._";
